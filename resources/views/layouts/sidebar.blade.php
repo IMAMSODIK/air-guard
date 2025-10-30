@@ -40,11 +40,38 @@
                         <h6>Pinned</h6>
                     </div>
                 </li>
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav"
-                        href="/">
-                        <i class="fa fa-tachometer text-white" aria-hidden="true"></i>
-                        </svg><span class="">Home</span></a>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('/home') ? 'active' : '' }}"
+                        href="/home">
+                        <i class="fa fa-home text-white me-2" aria-hidden="true"></i>
+                        <span>Home</span>
+                    </a>
                 </li>
+
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('index') ? 'active' : '' }}"
+                        href="/index">
+                        <i class="fa fa-list-alt text-white me-2" aria-hidden="true"></i>
+                        <span>Index</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('faq') ? 'active' : '' }}"
+                        href="/faq">
+                        <i class="fa fa-question-circle text-white me-2" aria-hidden="true"></i>
+                        <span>FAQ</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('developers') ? 'active' : '' }}"
+                        href="/developers">
+                        <i class="fa fa-code text-white me-2" aria-hidden="true"></i>
+                        <span>Developers</span>
+                    </a>
+                </li>
+
 
             </ul>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
