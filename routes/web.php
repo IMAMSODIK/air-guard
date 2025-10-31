@@ -35,3 +35,7 @@ Route::redirect('/', '/home');
 Route::fallback(function () {
     return redirect('/home');
 });
+
+Route::get('/test', function(){
+    return view('test');
+});

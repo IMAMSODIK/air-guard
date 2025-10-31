@@ -1,30 +1,326 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AQI Medan - Iframe Cropped</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Map & AQI — Mirip aqicn.org</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
   <style>
-    .iframe-wrapper {
-      width: 100%;
-      height: 100%;
+    :root{
+      --bg: #0f1724;
+      --card: #0b1220;
+      --muted: #9aa4b2;
+      --accent: #2b9bff;
+      --panel-width: 380px;
+    }
+    html,body,#map{ height:100%; margin:0; padding:0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(180deg,#071027 0%, #071827 100%); color:#e6eef6; }
+    .app {
+      display: grid;
+      grid-template-columns: var(--panel-width) 1fr;
+      gap: 18px;
+      height: 100vh;
     }
 
-    .iframe-wrapper iframe {
-      width: 100%;
-      height: 100%;
+    /* left panel */
+    .panel {
+      padding: 18px;
+      box-sizing: border-box;
+      background: linear-gradient(180deg, rgba(11,18,32,0.9), rgba(12,20,36,0.75));
+      border-radius: 12px;
+      margin: 18px;
+      box-shadow: 0 6px 24px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: calc(var(--panel-width) - 36px);
+    }
+
+    .branding { display:flex; align-items:center; gap:10px; }
+    .brand-logo{
+      width:46px;height:46px;border-radius:8px;background:linear-gradient(135deg,#1f6fff,#00c2a8); display:flex; align-items:center; justify-content:center; font-weight:700; color:white; font-size:18px;
+      box-shadow: 0 6px 20px rgba(31,111,255,0.14);
+    }
+    .brand-title { font-size:18px; font-weight:600; margin:0; }
+    .brand-sub { color:var(--muted); font-size:12px; margin-top:2px; }
+
+    .aqi-big {
+      display:flex; align-items:center; gap:16px; padding:12px; border-radius:10px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: inset 0 -2px 8px rgba(0,0,0,0.4);
+    }
+    .aqi-value { font-size:56px; font-weight:700; line-height:1; }
+    .aqi-meta { display:flex; flex-direction:column; gap:6px; }
+    .aqi-status { font-size:16px; font-weight:600; }
+    .aqi-location { color:var(--muted); font-size:13px; }
+
+    .pollutants { display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+    .poll-row { display:flex; justify-content:space-between; font-size:13px; }
+    .poll-name { color:var(--muted); }
+    .pill { padding:6px 10px; border-radius:999px; background: rgba(255,255,255,0.03); font-weight:600; }
+
+    .legend { margin-top:12px; display:flex; flex-wrap:wrap; gap:8px; }
+    .legend .item { padding:8px 10px; border-radius:8px; font-size:13px; display:flex; align-items:center; gap:8px; background: rgba(255,255,255,0.02); }
+
+    /* map container */
+    #map {
+      border-radius: 12px;
+      margin: 18px;
+      overflow: hidden;
+      box-shadow: 0 6px 30px rgba(3,10,25,0.6);
+    }
+
+    /* small footer */
+    .footer { color:var(--muted); font-size:12px; margin-top:auto; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .btn-refresh { background:transparent; border:1px solid rgba(255,255,255,0.06); padding:8px 12px; border-radius:8px; cursor:pointer; color:var(--muted); }
+    .small-note { color:var(--muted); font-size:12px; }
+    @media (max-width:1000px){
+      .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .panel { min-width: auto; margin: 12px; }
+      #map { margin: 12px; height: 60vh; }
     }
   </style>
 </head>
-
 <body>
+  <div class="app">
+    <div class="panel" id="panel">
+      <div class="branding">
+        <div class="brand-logo">AQI</div>
+        <div>
+          <div class="brand-title">Air Quality Map</div>
+          <div class="brand-sub">Data from WAQI — World Air Quality Index</div>
+        </div>
+      </div>
 
-  <div class="iframe-wrapper">
-    <iframe src="https://aqicn.org/city/indonesia/medan/m" >
-    </iframe>
+      <div class="aqi-big" id="aqiCard">
+        <div>
+          <div class="aqi-value" id="aqiValue">—</div>
+        </div>
+        <div class="aqi-meta">
+          <div class="aqi-status" id="aqiStatus">Memuat...</div>
+          <div class="aqi-location" id="aqiLocation">Lokasi tidak tersedia</div>
+          <div class="small-note" id="aqiTime">—</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="font-size:14px">Polutan utama</strong>
+          <button class="btn-refresh" id="refreshBtn">Refresh</button>
+        </div>
+        <div class="pollutants" id="pollutantsList">
+          <!-- pollutant rows -->
+        </div>
+      </div>
+
+      <div class="legend" id="legend">
+        <!-- legend items -->
+      </div>
+
+      <div class="footer">
+        <div class="small-note">Sumber: WAQI API</div>
+        <div class="small-note">Desain: mirip aqicn.org</div>
+      </div>
+    </div>
+
+    <div id="map"></div>
   </div>
 
-</body>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <script>
+    // --- CONFIG: gunakan URL API yang Anda berikan ---
+    const API_URL = "https://api.waqi.info/feed/here/?token=43560c647d82b9daf429da457f7b39cbda4c3e41";
+
+    // Utility: warna berdasarkan AQI (mirip skala umum)
+    function aqiColor(aqi) {
+      if (aqi === null || isNaN(aqi)) return "#999";
+      aqi = Number(aqi);
+      if (aqi <= 50) return "#55a84f";        // Good
+      if (aqi <= 100) return "#a3c853";       // Moderate
+      if (aqi <= 150) return "#fff833";       // Unhealthy for sensitive
+      if (aqi <= 200) return "#f29c33";       // Unhealthy
+      if (aqi <= 300) return "#e93f33";       // Very Unhealthy
+      return "#af2d24";                       // Hazardous
+    }
+
+    function aqiStatusText(aqi) {
+      if (aqi === null || isNaN(aqi)) return "Tidak tersedia";
+      aqi = Number(aqi);
+      if (aqi <= 50) return "Baik";
+      if (aqi <= 100) return "Sedang";
+      if (aqi <= 150) return "Tidak sehat bagi kelompok sensitif";
+      if (aqi <= 200) return "Tidak sehat";
+      if (aqi <= 300) return "Sangat tidak sehat";
+      return "Berbahaya";
+    }
+
+    // map init
+    const map = L.map('map', { zoomControl: true }).setView([0,0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let currentMarker = null;
+    let currentCircle = null;
+
+    // Render legend in panel
+    const legendEl = document.getElementById('legend');
+    const legendItems = [
+      { label: "0–50 Baik", color: "#55a84f" },
+      { label: "51–100 Sedang", color: "#a3c853" },
+      { label: "101–150 Tidak sehat (sensitif)", color: "#fff833" },
+      { label: "151–200 Tidak sehat", color: "#f29c33" },
+      { label: "201–300 Sangat tidak sehat", color: "#e93f33" },
+      { label: "301+ Berbahaya", color: "#af2d24" }
+    ];
+    legendItems.forEach(it=>{
+      const d = document.createElement('div');
+      d.className = 'item';
+      d.innerHTML = `<div style="width:14px;height:14px;border-radius:4px;background:${it.color};box-shadow:inset 0 -2px 6px rgba(0,0,0,0.2)"></div><div style="font-size:13px">${it.label}</div>`;
+      legendEl.appendChild(d);
+    });
+
+    // Pollutant display order & human names
+    const pollutantNames = { pm25: 'PM2.5', pm10: 'PM10', o3: 'O3', no2: 'NO₂', so2: 'SO₂', co: 'CO' };
+
+    // Safe fetch + render
+    async function loadAQI() {
+      setLoadingState(true);
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const json = await res.json();
+
+        // WAQI API returns { status: 'ok'|'error', data: { ... } }
+        if (!json || json.status !== 'ok' || !json.data) {
+          throw new Error("Respons WAQI: status bukan 'ok' atau data kosong");
+        }
+        const d = json.data;
+
+        // coords: try d.city.geo || d.city.geo? or d.iaqi? fallback to d.idx? WAQI returns d.city.geo or d.iaqi
+        let lat = null, lon = null;
+        if (Array.isArray(d.city && d.city.geo) && d.city.geo.length >= 2) {
+          [lat, lon] = d.city.geo;
+        } else if (d.location && d.location.geo && Array.isArray(d.location.geo)) {
+          [lat, lon] = d.location.geo;
+        } else if (d.map && d.map.lat && d.map.lon) {
+          lat = d.map.lat; lon = d.map.lon;
+        } else if (d.iaqi && d.iaqi.pm25 && d.iaqi.pm25.v) {
+          // fallback: do not have coords -> center to 0,0
+        }
+
+        // aqi value
+        const aqiVal = (d.aqi !== undefined && d.aqi !== '-') ? Number(d.aqi) : null;
+
+        // update left panel
+        document.getElementById('aqiValue').textContent = (aqiVal === null || isNaN(aqiVal)) ? '—' : aqiVal;
+        const statusText = aqiStatusText(aqiVal);
+        document.getElementById('aqiStatus').textContent = statusText;
+        document.getElementById('aqiStatus').style.color = aqiColor(aqiVal);
+        // location
+        const locationName = (d.city && d.city.name) ? d.city.name : (d.station && d.station.name) ? d.station.name : (d.attributions && d.attributions[0] && d.attributions[0].name) ? d.attributions[0].name : 'Lokasi tidak tersedia';
+        document.getElementById('aqiLocation').textContent = locationName;
+
+        // time
+        const timeStr = (d.time && (d.time.s || d.time.iso)) ? (d.time.s || d.time.iso) : (d.time && d.time.t ? (new Date(d.time.t*1000)).toLocaleString() : '—');
+        document.getElementById('aqiTime').textContent = `Update: ${timeStr}`;
+
+        // pollutants
+        const pollutantsContainer = document.getElementById('pollutantsList');
+        pollutantsContainer.innerHTML = '';
+        const iaqi = (d.iaqi && typeof d.iaqi === 'object') ? d.iaqi : {};
+        // create display rows for standard set
+        ['pm25','pm10','o3','no2','so2','co'].forEach(key=>{
+          const value = (iaqi[key] && iaqi[key].v !== undefined) ? iaqi[key].v : null;
+          const row = document.createElement('div');
+          row.className = 'poll-row';
+          row.innerHTML = `<div class="poll-name">${pollutantNames[key] || key.toUpperCase()}</div>
+                           <div>${value === null ? '<span class="pill">—</span>' : '<span class="pill">' + value + '</span>'}</div>`;
+          pollutantsContainer.appendChild(row);
+        });
+
+        // map marker & circle
+        if (lat !== null && lon !== null) {
+          // set view
+          map.setView([lat,lon], 12, { animate: true });
+
+          // remove previous
+          if (currentMarker) map.removeLayer(currentMarker);
+          if (currentCircle) map.removeLayer(currentCircle);
+
+          const color = aqiColor(aqiVal);
+          currentMarker = L.marker([lat,lon], {
+            title: locationName
+          }).addTo(map);
+
+          currentCircle = L.circle([lat,lon], {
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.25,
+            radius: (aqiVal && !isNaN(aqiVal)) ? Math.max(500, Math.min(aqiVal*50, 20000)) : 800
+          }).addTo(map);
+
+          const popupHtml = buildPopupHtml(d, aqiVal);
+          currentMarker.bindPopup(popupHtml);
+        } else {
+          // no coords: center to world
+          map.setView([0,0], 2);
+        }
+
+      } catch (err) {
+        console.error("Gagal fetch data WAQI:", err);
+        // show friendly UI error
+        document.getElementById('aqiValue').textContent = '—';
+        document.getElementById('aqiStatus').textContent = 'Gagal memuat data';
+        document.getElementById('aqiLocation').textContent = 'Periksa token / CORS / koneksi';
+        document.getElementById('pollutantsList').innerHTML = `<div style="color:var(--muted); font-size:13px">Error: ${String(err.message || err)}</div>`;
+      } finally {
+        setLoadingState(false);
+      }
+    }
+
+    function buildPopupHtml(data, aqiVal) {
+      const parts = [];
+      parts.push(`<div style="font-weight:700; margin-bottom:6px">${(data.city && data.city.name) ? data.city.name : 'Lokasi'}</div>`);
+      parts.push(`<div style="margin-bottom:6px"><strong>AQI:</strong> <span style="color:${aqiColor(aqiVal)}; font-weight:700">${aqiVal === null ? '—' : aqiVal}</span> — ${aqiStatusText(aqiVal)}</div>`);
+      // pollutants
+      const iaqi = data.iaqi || {};
+      const pols = Object.keys(iaqi).map(k => {
+        const v = iaqi[k] && iaqi[k].v !== undefined ? iaqi[k].v : null;
+        return `<div style="display:flex; justify-content:space-between; gap:12px"><div style="color:#9aa4b2">${(pollutantNames[k]||k.toUpperCase())}</div><div style="font-weight:600">${v===null?'-':v}</div></div>`;
+      }).join('');
+      if (pols) parts.push(`<div style="margin-top:6px">${pols}</div>`);
+      // attribution / credits
+      if (data.attributions && Array.isArray(data.attributions) && data.attributions.length) {
+        const at = data.attributions.map(a => a.name || '').filter(Boolean).join(', ');
+        if (at) parts.push(`<div style="margin-top:8px; font-size:12px; color:var(--muted)">Sumber: ${at}</div>`);
+      }
+      return `<div style="min-width:220px">${parts.join('')}</div>`;
+    }
+
+    function setLoadingState(isLoading) {
+      const btn = document.getElementById('refreshBtn');
+      btn.textContent = isLoading ? 'Memuat...' : 'Refresh';
+      btn.disabled = isLoading;
+    }
+
+    // refresh button
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      loadAQI();
+    });
+
+    // initial load
+    loadAQI();
+
+    // optional: auto-refresh setiap 5 menit
+    setInterval(() => {
+      loadAQI();
+    }, 5 * 60 * 1000);
+
+  </script>
+</body>
 </html>
