@@ -1,882 +1,465 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Peta Kualitas Udara (AQI) Interaktif</title>
+  <meta charset="utf-8" />
+  <title>AQI Map — Summary Card (Average of visible stations)</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
-    * { 
-      box-sizing: border-box; 
+    :root{
+      --aqi-good:#00E400; --aqi-moderate:#FFFF00; --aqi-usg:#FF7E00;
+      --aqi-unhealthy:#FF0000; --aqi-very:#8F3F97; --aqi-hazard:#7E0023;
     }
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      color: #333;
-      min-height: 100vh;
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#f3f6f9;color:#111}
+    .header{padding:12px; display:flex; gap:12px; align-items:center; background:#fff; box-shadow:0 6px 24px rgba(10,20,30,.06)}
+    .left{flex:1}
+    label{font-weight:700;display:block;margin-bottom:6px}
+    select{padding:8px 10px;border-radius:8px;border:1px solid #ddd;min-width:260px}
+    .muted{color:#666;font-size:13px}
+    .summary-card{
+      width:100%;
+      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
+      border-radius:10px;
+      box-shadow:0 8px 30px rgba(10,20,30,.06);
+      padding:12px;
+      display:flex;
+      gap:12px;
+      align-items:center;
     }
-    header {
-      background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    .aqi-big{
+      min-width:120px;
+      min-height:90px;
+      border-radius:10px;
+      padding:12px;
+      color:#fff;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      font-weight:800;
+      text-align:center;
     }
-    #controls {
-      background: #fff;
-      padding: 15px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      z-index: 1000;
-      margin-bottom: 5px;
-      position: relative;
-    }
-    select, button, input {
-      padding: 10px 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    input {
-      width: 250px;
-      cursor: text;
-    }
-    select:focus, button:hover, input:focus {
-      outline: none;
-      border-color: #007bff;
-      box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
-    }
-    button {
-      background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
-      color: white;
-      border: none;
-      font-weight: 600;
-    }
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    }
-    #leaflet-map {
-      width: 100%;
-      height: 65vh;
-      z-index: 1;
-      border-radius: 0 0 10px 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    #stats {
-      background: #fff;
-      margin: 20px auto;
-      padding: 25px;
-      max-width: 900px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    #aqi-summary {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-      gap: 15px;
-    }
-    .aqi-box {
-      flex: 1;
-      min-width: 200px;
-      background: #f8f9fa;
-      border-radius: 10px;
-      text-align: center;
-      padding: 20px;
-      margin: 5px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease;
-    }
-    .aqi-box:hover {
-      transform: translateY(-5px);
-    }
-    .aqi-value {
-      font-size: 42px;
-      font-weight: bold;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-    .aqi-city {
-      font-size: 20px;
-      font-weight: 600;
-      color: #495057;
-    }
-    .aqi-status {
-      font-size: 16px;
-      font-weight: 500;
-      margin-top: 5px;
-    }
-    .aqi-time {
-      font-size: 14px;
-      color: #6c757d;
-      margin: 8px 0;
-    }
-    .aqi-pollutants {
-      font-size: 14px;
-      color: #495057;
-      margin-top: 10px;
-    }
-    canvas {
-      margin-top: 15px;
-      width: 100%;
-      height: 260px;
-    }
-    #forecast-container {
-      margin-top: 25px;
-    }
-    .forecast-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: #495057;
-    }
-    .forecast-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
-    .forecast-day {
-      background: #f8f9fa;
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease;
-    }
-    .forecast-day:hover {
-      transform: translateY(-5px);
-    }
-    .forecast-date {
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #495057;
-    }
-    .forecast-aqi {
-      font-size: 24px;
-      font-weight: bold;
-      margin: 8px 0;
-      padding: 8px;
-      border-radius: 6px;
-    }
-    .forecast-status {
-      font-size: 14px;
-      color: #6c757d;
-    }
-    .forecast-note {
-      font-size: 14px;
-      color: #6c757d;
-      font-style: italic;
-      margin-top: 10px;
-      text-align: center;
-    }
-    #search-results {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 1001;
-      width: 250px;
-      display: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      margin-top: 5px;
-    }
-    .search-result-item {
-      padding: 10px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-    }
-    .search-result-item:hover {
-      background: #f0f0f0;
-    }
-    .search-result-item:last-child {
-      border-bottom: none;
-    }
-    #leaflet-map-error {
-      color: white;
-      background: #dc3545;
-      padding: 12px;
-      display: none;
-      border-radius: 0 0 10px 10px;
-      text-align: center;
-      font-weight: 500;
-    }
-    
-    /* Loading indicator */
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    /* Location detection modal */
-    #location-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    }
-    .modal-content h3 {
-      margin-top: 0;
-      color: #007bff;
-    }
-    .modal-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    .modal-buttons button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    #allow-location {
-      background: #007bff;
-      color: white;
-    }
-    #skip-location {
-      background: #6c757d;
-      color: white;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      #aqi-summary {
-        flex-direction: column;
-      }
-      .aqi-box {
-        width: 100%;
-      }
-      .forecast-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      }
-      input {
-        width: 200px;
-      }
-      #search-results {
-        width: 200px;
-      }
+    .aqi-meta{font-size:13px;color:#333}
+    .param-grid{display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-left:8px;}
+    .param{background:#fff;border-radius:8px;padding:8px; text-align:center; font-size:13px; box-shadow:0 3px 10px rgba(10,20,30,.04)}
+    .param b{display:block;font-weight:700}
+    .container{max-width:1100px;margin:18px auto;padding:0 12px}
+    #map{width:100%;height:68vh;border-radius:10px;margin-top:12px; overflow:hidden}
+    .station-popup{font-size:13px}
+    .station-popup b{display:block;margin-bottom:6px}
+    @media(max-width:800px){
+      .param-grid{grid-template-columns:repeat(2,1fr)}
+      .aqi-big{min-width:100px}
+      .summary-card{flex-direction:column;align-items:flex-start}
     }
   </style>
 </head>
 <body>
 
-<header>🌏 Peta Kualitas Udara Dunia (AQI)</header>
-
-<div id="controls">
-  <div style="position: relative;">
-    <input type="text" id="citySearch" placeholder="Cari kota (contoh: Jakarta, London)" />
-    <div id="search-results"></div>
-  </div>
-  <button id="btnMyLocation">📍 Deteksi Lokasi Saya</button>
-</div>
-
-<div id="leaflet-map"></div>
-
-<div id="stats">
-  <div id="aqi-summary">
-    <div class="aqi-box">
-      <div class="aqi-city" id="aqi-city">-</div>
-      <div class="aqi-value" id="aqi-value">-</div>
-      <div class="aqi-status" id="aqi-status">-</div>
-    </div>
-    <div class="aqi-box">
-      <b>Update Terakhir</b>
-      <div class="aqi-time" id="aqi-time">-</div>
-      <div class="aqi-pollutants" id="aqi-pollutants"></div>
-    </div>
-  </div>
-  
-  <div id="forecast-container">
-    <div class="forecast-title">Perkiraan Tren AQI 7 Hari Mendatang</div>
-    <div class="forecast-grid" id="forecast-grid">
-      <!-- Forecast days will be populated here -->
-    </div>
-    <div class="forecast-note" id="forecast-note"></div>
-  </div>
-  
-  <canvas id="forecastChart"></canvas>
-</div>
-
-<div id="leaflet-map-error"></div>
-
-<!-- Location Detection Modal -->
-<div id="location-modal" style="display: none;">
-  <div class="modal-content">
-    <h3>🌍 Deteksi Lokasi Otomatis</h3>
-    <p>Izinkan akses lokasi untuk menampilkan kualitas udara di daerah Anda secara otomatis.</p>
-    <p><small>Lokasi Anda tidak akan disimpan atau dibagikan ke pihak lain.</small></p>
-    <div class="modal-buttons">
-      <button id="allow-location">Izinkan Lokasi</button>
-      <button id="skip-location">Lewati</button>
-    </div>
-  </div>
-</div>
-
-<script>
-const apiToken = "43560c647d82b9daf429da457f7b39cbda4c3e41";
-let map, allMarkers = {}, aqiChart;
-let searchTimeout;
-let isFirstLoad = true;
-
-function createMap() {
-  const base = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
-  });
-  map = L.map("leaflet-map").setView([-2, 118], 5).addLayer(base);
-}
-
-function removeMarkers() {
-  Object.values(allMarkers).forEach(m => map.removeLayer(m));
-  allMarkers = {};
-}
-
-function populateMarkers(lat, lon) {
-  const bounds = `${lat-1},${lon-1},${lat+1},${lon+1}`;
-  removeMarkers();
-  
-  // Show loading state
-  const searchBtn = document.getElementById('btnMyLocation');
-  const originalText = searchBtn.innerHTML;
-  searchBtn.innerHTML = '<span class="loading"></span> Memuat...';
-  searchBtn.disabled = true;
-  
-  fetch(`https://api.waqi.info/v2/map/bounds/?latlng=${bounds}&token=${apiToken}`)
-    .then(r => r.json())
-    .then(data => {
-      if (data.status !== "ok") throw data.data;
-      data.data.forEach(station => {
-        const icon = L.icon({
-          iconUrl: `https://waqi.info/mapicon/${station.aqi}.30.png`,
-          iconSize: [30, 30]
-        });
-        const marker = L.marker([station.lat, station.lon], {icon, title: station.station.name})
-          .addTo(map)
-          .on("click", () => {
-            L.popup()
-              .setLatLng([station.lat, station.lon])
-              .setContent(`<b>${station.station.name}</b><br>AQI: ${station.aqi}`)
-              .openOn(map);
-          });
-        allMarkers[station.uid] = marker;
-      });
-      map.setView([lat, lon], 10);
-    })
-    .catch(err => {
-      const o = document.getElementById("leaflet-map-error");
-      o.style.display = "block";
-      o.textContent = "Gagal memuat data: " + err;
-    })
-    .finally(() => {
-      // Restore button state
-      searchBtn.innerHTML = originalText;
-      searchBtn.disabled = false;
-    });
-}
-
-function searchCity(query) {
-  if (!query || query.length < 2) {
-    document.getElementById('search-results').style.display = 'none';
-    return;
-  }
-  
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    fetch(`https://api.waqi.info/search/?token=${apiToken}&keyword=${encodeURIComponent(query)}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.status !== "ok") throw data.data;
-        
-        const resultsContainer = document.getElementById('search-results');
-        resultsContainer.innerHTML = '';
-        
-        if (data.data.length === 0) {
-          resultsContainer.innerHTML = '<div class="search-result-item">Tidak ada hasil ditemukan</div>';
-        } else {
-          data.data.forEach(station => {
-            const item = document.createElement('div');
-            item.className = 'search-result-item';
-            item.textContent = station.station.name;
-            item.addEventListener('click', () => {
-              document.getElementById('citySearch').value = station.station.name;
-              resultsContainer.style.display = 'none';
-              loadStatsByStation(station);
-            });
-            resultsContainer.appendChild(item);
-          });
-        }
-        
-        resultsContainer.style.display = 'block';
-      })
-      .catch(err => {
-        console.error('Error searching city:', err);
-        const resultsContainer = document.getElementById('search-results');
-        resultsContainer.innerHTML = '<div class="search-result-item">Error mencari kota</div>';
-        resultsContainer.style.display = 'block';
-      });
-  }, 300);
-}
-
-function loadStatsByStation(station) {
-  const uid = station.uid;
-  const cityName = station.station.name;
-  
-  // Show loading state
-  document.getElementById('aqi-city').textContent = 'Memuat data...';
-  document.getElementById('aqi-value').textContent = '-';
-  document.getElementById('aqi-status').textContent = '-';
-  
-  fetch(`https://api.waqi.info/feed/@${uid}/?token=${apiToken}`)
-    .then(r => r.json())
-    .then(res => {
-      if (res.status !== "ok") throw res.data;
-      const d = res.data;
-      const aqi = d.aqi;
-      const time = d.time.s;
-      const pol = d.iaqi;
-      
-      document.getElementById("aqi-city").textContent = cityName;
-      document.getElementById("aqi-value").textContent = aqi;
-      document.getElementById("aqi-time").textContent = time;
-      
-      const aqiStatus = getAQICategory(aqi);
-      document.getElementById("aqi-status").textContent = aqiStatus.status;
-      
-      // Set AQI value color based on category
-      const aqiValueElement = document.getElementById("aqi-value");
-      aqiValueElement.style.backgroundColor = aqiStatus.color;
-      aqiValueElement.style.color = aqiStatus.textColor;
-      
-      let polList = "";
-      for (let p in pol) {
-        polList += `${p.toUpperCase()}: ${pol[p].v} `;
-      }
-      document.getElementById("aqi-pollutants").textContent = polList;
-      
-      // if city has coordinates, populate markers nearby
-      if (d.city.geo && d.city.geo.length === 2) {
-        populateMarkers(d.city.geo[0], d.city.geo[1]);
-      } else if (station.lat && station.lon) {
-        populateMarkers(station.lat, station.lon);
-      }
-      
-      // Try to get forecast data
-      getForecastData(uid, aqi, cityName);
-    })
-    .catch(e => {
-      document.getElementById("aqi-city").textContent = "Gagal memuat data";
-      document.getElementById("aqi-value").textContent = "-";
-      document.getElementById("aqi-status").textContent = e;
-    });
-}
-
-function getForecastData(uid, currentAqi, city) {
-  // Try to get forecast from the API first
-  fetch(`https://api.waqi.info/feed/@${uid}/?token=${apiToken}`)
-    .then(r => r.json())
-    .then(res => {
-      if (res.status === "ok" && res.data.forecast) {
-        // Use actual forecast data if available
-        useActualForecast(res.data.forecast, city);
-      } else {
-        // Fallback to generated forecast
-        createGeneratedForecast(currentAqi, city, false);
-      }
-    })
-    .catch(() => {
-      // Fallback to generated forecast if API fails
-      createGeneratedForecast(currentAqi, city, false);
-    });
-}
-
-function useActualForecast(forecastData, city) {
-  const forecastGrid = document.getElementById("forecast-grid");
-  forecastGrid.innerHTML = '';
-  
-  const today = new Date();
-  let hasDailyData = false;
-  
-  // Check if daily forecast is available
-  if (forecastData.daily && forecastData.daily.pm25) {
-    hasDailyData = true;
-    const pm25Data = forecastData.daily.pm25;
-    
-    for (let i = 0; i < Math.min(7, pm25Data.length); i++) {
-      const forecastDate = new Date(today);
-      forecastDate.setDate(today.getDate() + i);
-      
-      // Use PM2.5 data to estimate AQI
-      const pm25 = pm25Data[i].avg;
-      const forecastAqi = Math.round(pm25 * 0.5); // Rough conversion
-      
-      const aqiCategory = getAQICategory(forecastAqi);
-      
-      const dayElement = document.createElement("div");
-      dayElement.className = "forecast-day";
-      
-      // Format date
-      const dateString = forecastDate.toLocaleDateString('id-ID', { 
-        weekday: 'short', 
-        day: 'numeric', 
-        month: 'short' 
-      });
-      
-      dayElement.innerHTML = `
-        <div class="forecast-date">${dateString}</div>
-        <div class="forecast-aqi" style="background-color: ${aqiCategory.color}; color: ${aqiCategory.textColor}">
-          ${forecastAqi}
+  <div class="header">
+    <div class="left container">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <div>
+          <label for="citySelect">Select City (curated)</label>
+          <select id="citySelect">
+            <option value="">-- choose city --</option>
+          </select>
+          <div class="muted">Auto-detect location on load (fallback: Jakarta).</div>
         </div>
-        <div class="forecast-status">${aqiCategory.status}</div>
-      `;
-      
-      forecastGrid.appendChild(dayElement);
-    }
-    
-    document.getElementById("forecast-note").textContent = "Data perkiraan berdasarkan prediksi PM2.5";
-  } else {
-    // Fallback to generated forecast if no daily data
-    createGeneratedForecast(currentAqi, city, true);
-    return;
-  }
-  
-  // Update chart with actual forecast data
-  updateForecastChartWithActualData(forecastData);
-}
 
-function createGeneratedForecast(currentAqi, city, fromAPI) {
-  const forecastGrid = document.getElementById("forecast-grid");
-  forecastGrid.innerHTML = '';
-  
-  const today = new Date();
-  
-  for (let i = 0; i < 7; i++) {
-    const forecastDate = new Date(today);
-    forecastDate.setDate(today.getDate() + i);
-    
-    // Generate realistic AQI forecast based on current value
-    // More realistic variation that considers trends
-    let variation;
-    if (i === 0) {
-      variation = 0; // Today stays the same
-    } else {
-      // Create a trend: slight increase/decrease over days
-      const trend = Math.random() > 0.5 ? 1 : -1;
-      variation = Math.round((Math.random() * 15 + 5) * trend * (i/7));
-    }
-    
-    const forecastAqi = Math.max(10, Math.min(300, currentAqi + variation));
-    
-    const aqiCategory = getAQICategory(forecastAqi);
-    
-    const dayElement = document.createElement("div");
-    dayElement.className = "forecast-day";
-    
-    // Format date
-    const dateString = forecastDate.toLocaleDateString('id-ID', { 
-      weekday: 'short', 
-      day: 'numeric', 
-      month: 'short' 
-    });
-    
-    dayElement.innerHTML = `
-      <div class="forecast-date">${dateString}</div>
-      <div class="forecast-aqi" style="background-color: ${aqiCategory.color}; color: ${aqiCategory.textColor}">
-        ${forecastAqi}
+        <div style="flex:1;">
+          <label>Area Summary</label>
+          <div class="summary-card" id="summaryCard">
+            <div id="aqiBox" class="aqi-big" style="background:var(--aqi-moderate); color:#000;">
+              <div style="font-size:22px" id="avgAQI">—</div>
+              <div style="font-size:13px" id="avgCategory">—</div>
+            </div>
+
+            <div style="flex:1;">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="aqi-meta" id="areaLabel">Area: —</div>
+                <div class="muted" id="areaInfo">Stations: 0 • Averaged from up to 30 stations</div>
+              </div>
+              <div class="param-grid" id="paramGrid">
+                <div class="param"><b>PM2.5</b><span id="avg_pm25">—</span></div>
+                <div class="param"><b>PM10</b><span id="avg_pm10">—</span></div>
+                <div class="param"><b>O₃</b><span id="avg_o3">—</span></div>
+                <div class="param"><b>NO₂</b><span id="avg_no2">—</span></div>
+                <div class="param"><b>SO₂</b><span id="avg_so2">—</span></div>
+                <div class="param"><b>CO</b><span id="avg_co">—</span></div>
+                <div class="param"><b>P (hPa)</b><span id="avg_p">—</span></div>
+                <div class="param"><b>Avg Dist (km)</b><span id="avg_dist">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
-      <div class="forecast-status">${aqiCategory.status}</div>
-    `;
-    
-    forecastGrid.appendChild(dayElement);
-  }
-  
-  if (fromAPI) {
-    document.getElementById("forecast-note").textContent = "Data perkiraan tidak tersedia, menggunakan estimasi berbasis data saat ini";
-  } else {
-    document.getElementById("forecast-note").textContent = "Data perkiraan menggunakan estimasi berbasis data saat ini";
-  }
-  
-  // Update the chart with generated forecast
-  updateForecastChart(currentAqi);
-}
+    </div>
+  </div>
 
-function updateForecastChartWithActualData(forecastData) {
-  const labels = [];
-  const data = [];
-  
-  const today = new Date();
-  
-  if (forecastData.daily && forecastData.daily.pm25) {
-    const pm25Data = forecastData.daily.pm25;
-    
-    for (let i = 0; i < Math.min(7, pm25Data.length); i++) {
-      const forecastDate = new Date(today);
-      forecastDate.setDate(today.getDate() + i);
-      
-      const dateString = forecastDate.toLocaleDateString('id-ID', { 
-        weekday: 'short', 
-        day: 'numeric', 
-        month: 'short' 
-      });
-      
-      labels.push(dateString);
-      
-      // Convert PM2.5 to estimated AQI
-      const pm25 = pm25Data[i].avg;
-      const estimatedAqi = Math.round(pm25 * 0.5);
-      data.push(estimatedAqi);
+  <div class="container">
+    <div id="map"></div>
+  </div>
+
+  <!-- libs -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script>
+  /***** CONFIG *****/
+  const WAQI_TOKEN = "43560c647d82b9daf429da457f7b39cbda4c3e41";
+  const FALLBACK_CITY = { city: "Jakarta", country: "Indonesia", lat:-6.21462, lng:106.84513 };
+  const MAX_DETAIL_STATIONS = 30; // max number of station detail fetches for averaging per refresh
+
+  // curated city list for quick dropdown
+  const curatedCities = [
+  { country: "Indonesia", city: "Jakarta", lat: -6.21462, lng: 106.84513 },
+    { country: "Indonesia", city: "Surabaya", lat: -7.24917, lng: 112.75083 },
+    { country: "Indonesia", city: "Bandung", lat: -6.91746, lng: 107.61912 },
+    { country: "Indonesia", city: "Medan", lat: 3.59520, lng: 98.67223 },
+    { country: "Indonesia", city: "Semarang", lat: -6.96667, lng: 110.41667 },
+    { country: "Indonesia", city: "Makassar", lat: -5.14767, lng: 119.43273 },
+    { country: "Indonesia", city: "Denpasar", lat: -8.65000, lng: 115.21667 },
+    { country: "Indonesia", city: "Yogyakarta", lat: -7.79722, lng: 110.36880 },
+    { country: "Indonesia", city: "Palembang", lat: -2.99093, lng: 104.75656 },
+    { country: "Indonesia", city: "Balikpapan", lat: -1.26753, lng: 116.82887 },
+    { country: "Indonesia", city: "Pekanbaru", lat: 0.53333, lng: 101.45000 },
+    { country: "Indonesia", city: "Batam", lat: 1.04563, lng: 104.03045 },
+    { country: "United States", city: "New York", lat:40.71427, lng:-74.00597 },
+    { country: "United States", city: "Los Angeles", lat:34.05223, lng:-118.24368 },
+    { country: "United Kingdom", city: "London", lat:51.50722, lng:-0.1275 },
+    { country: "France", city: "Paris", lat:48.85661, lng:2.35149 },
+    { country: "China", city: "Beijing", lat:39.9042, lng:116.4074 },
+    { country: "China", city: "Shanghai", lat:31.2304, lng:121.4737 },
+    { country: "Japan", city: "Tokyo", lat:35.6895, lng:139.69171 },
+    { country: "India", city: "Delhi", lat:28.65381, lng:77.2295 },
+    { country: "India", city: "Mumbai", lat:19.07599, lng:72.87766 },
+    { country: "Brazil", city: "São Paulo", lat:-23.5475, lng:-46.63611 },
+    { country: "Australia", city: "Sydney", lat:-33.86785, lng:151.20732 },
+    { country: "Russia", city: "Moscow", lat:55.75222, lng:37.61556 },
+    { country: "Canada", city: "Toronto", lat:43.70011, lng:-79.4163 },
+    { country: "South Korea", city: "Seoul", lat:37.566, lng:126.9784 },
+    { country: "Germany", city: "Berlin", lat:52.52437, lng:13.41053 },
+    { country: "Mexico", city: "Mexico City", lat:19.42847, lng:-99.12766 },
+    { country: "Turkey", city: "Istanbul", lat:41.01384, lng:28.94966 },
+    { country: "Egypt", city: "Cairo", lat:30.06263, lng:31.24967 }
+  ];
+
+  /***** UTILITIES *****/
+  function getCssVar(name){ const v = getComputedStyle(document.documentElement).getPropertyValue(name); return v?v.trim():'#999'; }
+  function aqiCategory(aqi){
+    if (aqi == null || isNaN(Number(aqi))) return { cat: 'Unknown', color: '#999' };
+    aqi = Number(aqi);
+    if (aqi <= 50) return { cat: 'Good', color: getCssVar('--aqi-good') };
+    if (aqi <= 100) return { cat: 'Moderate', color: getCssVar('--aqi-moderate') };
+    if (aqi <= 150) return { cat: 'Unhealthy for Sensitive Groups', color: getCssVar('--aqi-usg') };
+    if (aqi <= 200) return { cat: 'Unhealthy', color: getCssVar('--aqi-unhealthy') };
+    if (aqi <= 300) return { cat: 'Very Unhealthy', color: getCssVar('--aqi-very') };
+    return { cat: 'Hazardous', color: getCssVar('--aqi-hazard') };
+  }
+  function toFixedOrDash(v, digits=1){ return (v === null || v === undefined || isNaN(Number(v))) ? '—' : Number(v).toFixed(digits); }
+
+  // Haversine
+  function distanceKm(lat1,lon1,lat2,lon2){
+    function r(d){return d*Math.PI/180}
+    const R=6371; const dLat=r(lat2-lat1), dLon=r(lon2-lon1);
+    const a=Math.sin(dLat/2)**2 + Math.cos(r(lat1))*Math.cos(r(lat2))*Math.sin(dLon/2)**2;
+    return 2*R*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  // concurrency-limited executor for promises (batching)
+  async function batchFetch(urls, batchSize=6){
+    const results = [];
+    for(let i=0;i<urls.length;i+=batchSize){
+      const batch = urls.slice(i,i+batchSize).map(u=>fetch(u).then(r=>r.json()).catch(e=>({error:e})));
+      const res = await Promise.all(batch);
+      results.push(...res);
     }
+    return results;
   }
-  
-  updateChart(labels, data);
-}
 
-function updateForecastChart(current) {
-  const labels = [];
-  const data = [];
-  
-  const today = new Date();
-  
-  for (let i = 0; i < 7; i++) {
-    const forecastDate = new Date(today);
-    forecastDate.setDate(today.getDate() + i);
-    
-    const dateString = forecastDate.toLocaleDateString('id-ID', { 
-      weekday: 'short', 
-      day: 'numeric', 
-      month: 'short' 
+  /***** MAP & STATE *****/
+  let map, stationMarkers = {}, lastStations = []; // lastStations from map/bounds (raw summary)
+  function initMap(){
+    map = L.map('map',{zoomControl:true}).setView([0,0],2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19, attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+
+    map.on('moveend', debounce(async ()=>{
+      const b = map.getBounds();
+      const boundsStr = `${b.getNorth()},${b.getWest()},${b.getSouth()},${b.getEast()}`;
+      await refreshStationsAndSummary(boundsStr);
+    }, 700));
+  }
+
+  /***** UI populate curated dropdown *****/
+  function populateDropdown(){
+    const sel = document.getElementById('citySelect');
+    curatedCities.forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = JSON.stringify(c);
+      opt.textContent = `${c.city}, ${c.country}`;
+      sel.appendChild(opt);
     });
-    
-    labels.push(dateString);
-    
-    // Generate realistic forecast data
-    let variation;
-    if (i === 0) {
-      variation = 0;
-    } else {
-      const trend = Math.random() > 0.5 ? 1 : -1;
-      variation = Math.round((Math.random() * 15 + 5) * trend * (i/7));
-    }
-    
-    data.push(Math.max(10, Math.min(300, current + variation)));
+    sel.addEventListener('change', e=>{
+      if(!e.target.value) return;
+      const obj = JSON.parse(e.target.value);
+      selectCity(obj);
+    });
   }
-  
-  updateChart(labels, data);
-}
 
-function updateChart(labels, data) {
-  const ctx = document.getElementById("forecastChart").getContext("2d");
-  if (aqiChart) aqiChart.destroy();
-  
-  aqiChart = new Chart(ctx, {
-    type: "line",
-    data: { 
-      labels, 
-      datasets: [{
-        label: "Perkiraan Tren AQI 7 Hari", 
-        data, 
-        borderWidth: 3, 
-        borderColor: "#007bff",
-        backgroundColor: "rgba(0, 123, 255, 0.1)",
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: "#007bff",
-        pointBorderColor: "#fff",
-        pointBorderWidth: 2,
-        pointRadius: 5
-      }] 
-    },
-    options: { 
-      responsive: true,
-      plugins: {
-        legend: {
-          display: true,
-          position: 'top'
-        }
-      },
-      scales: { 
-        y: { 
-          beginAtZero: false,
-          title: {
-            display: true,
-            text: 'Nilai AQI'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Tanggal'
-          }
-        }
-      } 
+  /***** Fetch stations (map/bounds) and render markers *****/
+  async function fetchStations(boundsStr){
+    try{
+      const url = `https://api.waqi.info/v2/map/bounds/?latlng=${boundsStr}&token=${WAQI_TOKEN}`;
+      const r = await fetch(url);
+      const j = await r.json();
+      if(j.status !== 'ok') return [];
+      return j.data || [];
+    }catch(e){
+      console.error('fetchStations err', e); return [];
     }
-  });
-}
-
-function getAQICategory(aqi) {
-  if (aqi <= 50) return { 
-    status: "Baik 😀", 
-    color: "#4CAF50", 
-    textColor: "white" 
-  };
-  if (aqi <= 100) return { 
-    status: "Sedang 🙂", 
-    color: "#FFC107", 
-    textColor: "black" 
-  };
-  if (aqi <= 150) return { 
-    status: "Tidak Sehat untuk Sensitif 😐", 
-    color: "#FF9800", 
-    textColor: "black" 
-  };
-  if (aqi <= 200) return { 
-    status: "Tidak Sehat 😷", 
-    color: "#F44336", 
-    textColor: "white" 
-  };
-  if (aqi <= 300) return { 
-    status: "Sangat Tidak Sehat 🤒", 
-    color: "#9C27B0", 
-    textColor: "white" 
-  };
-  return { 
-    status: "Berbahaya ☠️", 
-    color: "#673AB7", 
-    textColor: "white" 
-  };
-}
-
-function detectLocation() {
-  if (!navigator.geolocation) {
-    alert("Browser tidak mendukung geolocation");
-    return;
   }
-  
-  // Show loading state
-  const locationBtn = document.getElementById('btnMyLocation');
-  const originalText = locationBtn.innerHTML;
-  locationBtn.innerHTML = '<span class="loading"></span> Mendeteksi...';
-  locationBtn.disabled = true;
-  
-  navigator.geolocation.getCurrentPosition(pos => {
-    const { latitude, longitude } = pos.coords;
-    fetch(`https://api.waqi.info/feed/geo:${latitude};${longitude}/?token=${apiToken}`)
-      .then(r => r.json())
-      .then(d => {
-        if (d.status !== "ok") throw d.data;
-        const uid = d.data.idx;
-        const station = {
-          uid: uid,
-          station: {
-            name: d.data.city.name
-          },
-          lat: latitude,
-          lon: longitude
-        };
-        loadStatsByStation(station);
-      })
-      .catch(() => {
-        alert("Tidak dapat mendeteksi stasiun AQI terdekat. Coba cari kota secara manual.");
-      })
-      .finally(() => {
-        // Restore button state
-        locationBtn.innerHTML = originalText;
-        locationBtn.disabled = false;
+
+  function clearMarkers(){
+    for(const k in stationMarkers){ try{ map.removeLayer(stationMarkers[k]); }catch(e){} }
+    stationMarkers = {};
+  }
+
+  function renderStationMarkers(stations){
+    clearMarkers();
+    stations.forEach(s=>{
+      // sanitized aqi for icon path (if missing, use "na")
+      const aqiVal = (s.aqi === undefined || s.aqi === null || s.aqi === '-') ? 'na' : s.aqi;
+      const iconUrl = `https://waqi.info/mapicon/${aqiVal}.30.png`;
+      const icon = L.icon({ iconUrl, iconSize:[46,46], iconAnchor:[23,23] });
+      const marker = L.marker([s.lat, s.lon], { icon, title: s.station && s.station.name ? s.station.name : 'station' }).addTo(map);
+      marker.on('click', async ()=>{
+        const popup = L.popup({maxWidth:380}).setLatLng([s.lat,s.lon]).setContent(`<div class="station-popup"><b>${s.station && s.station.name ? s.station.name : 'Station'}</b>Loading details... (AQI ${s.aqi})</div>`).openOn(map);
+        try{
+          const detail = await fetchAQIDetail(s.uid);
+          popup.setContent(buildPopupHtml(detail));
+        }catch(err){
+          popup.setContent(`<div class="station-popup"><b>${s.station && s.station.name ? s.station.name : 'Station'}</b><div>Error loading details</div></div>`);
+        }
       });
-  }, err => {
-    alert("Gagal mendeteksi lokasi: " + err.message);
-    // Restore button state
-    locationBtn.innerHTML = originalText;
-    locationBtn.disabled = false;
-  });
-}
-
-function showLocationModal() {
-  const modal = document.getElementById('location-modal');
-  modal.style.display = 'flex';
-  
-  document.getElementById('allow-location').addEventListener('click', () => {
-    modal.style.display = 'none';
-    detectLocation();
-  });
-  
-  document.getElementById('skip-location').addEventListener('click', () => {
-    modal.style.display = 'none';
-    // Load default city (Jakarta) if user skips location detection
-    searchCity('Jakarta');
-  });
-}
-
-// Inisialisasi
-createMap();
-
-// Event listeners
-document.getElementById("citySearch").addEventListener("input", function() {
-  searchCity(this.value);
-});
-
-document.getElementById("btnMyLocation").addEventListener("click", detectLocation);
-
-// Close search results when clicking outside
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('#citySearch') && !e.target.closest('#search-results')) {
-    document.getElementById('search-results').style.display = 'none';
+      stationMarkers[s.uid] = marker;
+    });
   }
-});
 
-// Auto-detect location on page load
-window.addEventListener('load', function() {
-  // Show location modal after a short delay
-  setTimeout(() => {
-    showLocationModal();
-  }, 1000);
-});
-</script>
+  function buildPopupHtml(detail){
+    const title = (detail.city && detail.city.name) ? detail.city.name : (detail.attributions && detail.attributions[0] && detail.attributions[0].name ? detail.attributions[0].name : 'Station');
+    const aqi = detail.aqi !== undefined ? detail.aqi : '—';
+    const timeStr = detail.time && (detail.time.s || detail.time.v) ? (detail.time.s || new Date(detail.time.v*1000).toLocaleString()) : '';
+    let pollutantsHtml = '';
+    if(detail.iaqi){
+      const keys = Object.keys(detail.iaqi);
+      pollutantsHtml = keys.map(k=>`<b>${k.toUpperCase()}</b>: ${detail.iaqi[k].v}`).join(' • ');
+    }
+    const sources = (detail.attributions || []).map(a => a.url ? `<a href="${a.url}" target="_blank" rel="noopener">${a.name}</a>` : a.name).join(' • ');
+    return `<div class="station-popup"><b>${title}</b>
+      <div><strong>AQI:</strong> ${aqi}</div>
+      <div style="margin-top:6px">${pollutantsHtml || 'No pollutant data'}</div>
+      <div class="muted" style="margin-top:8px;font-size:12px">${timeStr}</div>
+      <div class="muted" style="margin-top:6px;font-size:12px">Sources: ${sources || '—'}</div>
+    </div>`;
+  }
 
+  async function fetchAQIDetail(uid){
+    const url = `https://api.waqi.info/feed/@${uid}/?token=${WAQI_TOKEN}`;
+    const r = await fetch(url);
+    const j = await r.json();
+    if(j.status !== 'ok') throw j;
+    return j.data;
+  }
+
+  /***** Summary computation: average IAQI values across visible area *****/
+  async function computeAndShowSummaryForStations(centerLat, centerLng, stations){
+    // stations: array from /map/bounds: {uid, aqi, lat, lon, station}
+    // we'll pick up to MAX_DETAIL_STATIONS closest stations to center for detail fetch
+    if(!stations || stations.length === 0){
+      resetSummary();
+      return;
+    }
+
+    // sort by distance to center
+    const scored = stations.map(s => {
+      const d = distanceKm(centerLat, centerLng, s.lat, s.lon);
+      return {...s, dist: d};
+    }).sort((a,b)=>a.dist - b.dist);
+
+    const toFetch = scored.slice(0, MAX_DETAIL_STATIONS);
+    const urls = toFetch.map(s => `https://api.waqi.info/feed/@${s.uid}/?token=${WAQI_TOKEN}`);
+
+    // fetch in batches to be kind to API
+    const rawResults = await batchFetch(urls, 6); // returns array of parsed JSON or {error}
+    const details = [];
+    for(const r of rawResults){
+      if(!r) continue;
+      if(r.status === 'ok' && r.data) details.push(r.data);
+      // sometimes our batchFetch wrapper returns object with status/error depending
+      else if(r && r.data) details.push(r.data);
+    }
+
+    if(details.length === 0){
+      resetSummary();
+      return;
+    }
+
+    // accumulate numeric pollutant values
+    const sum = { aqi:0, pm25:0, pm10:0, o3:0, no2:0, so2:0, co:0, p:0 };
+    const cnt = { aqi:0, pm25:0, pm10:0, o3:0, no2:0, so2:0, co:0, p:0 };
+    const distSum = { total:0 };
+
+    details.forEach(d => {
+      const aqi = (d.aqi !== undefined && !isNaN(Number(d.aqi))) ? Number(d.aqi) : null;
+      if(aqi !== null){ sum.aqi += aqi; cnt.aqi++; }
+      if(d.iaqi){
+        if(d.iaqi.pm25 && !isNaN(Number(d.iaqi.pm25.v))){ sum.pm25 += Number(d.iaqi.pm25.v); cnt.pm25++; }
+        if(d.iaqi.pm10 && !isNaN(Number(d.iaqi.pm10.v))){ sum.pm10 += Number(d.iaqi.pm10.v); cnt.pm10++; }
+        if(d.iaqi.o3 && !isNaN(Number(d.iaqi.o3.v))){ sum.o3 += Number(d.iaqi.o3.v); cnt.o3++; }
+        if(d.iaqi.no2 && !isNaN(Number(d.iaqi.no2.v))){ sum.no2 += Number(d.iaqi.no2.v); cnt.no2++; }
+        if(d.iaqi.so2 && !isNaN(Number(d.iaqi.so2.v))){ sum.so2 += Number(d.iaqi.so2.v); cnt.so2++; }
+        if(d.iaqi.co && !isNaN(Number(d.iaqi.co.v))){ sum.co += Number(d.iaqi.co.v); cnt.co++; }
+        if(d.iaqi.p && !isNaN(Number(d.iaqi.p.v))){ sum.p += Number(d.iaqi.p.v); cnt.p++; }
+      }
+      // distance: if station includes coordinates
+      if(d.city && d.city.geo && d.city.geo.length === 2){
+        const lat = Number(d.city.geo[0]), lon = Number(d.city.geo[1]);
+        const dist = distanceKm(centerLat, centerLng, lat, lon);
+        distSum.total += dist;
+      }
+    });
+
+    const avg = {
+      aqi: cnt.aqi? sum.aqi / cnt.aqi : null,
+      pm25: cnt.pm25? sum.pm25 / cnt.pm25 : null,
+      pm10: cnt.pm10? sum.pm10 / cnt.pm10 : null,
+      o3: cnt.o3? sum.o3 / cnt.o3 : null,
+      no2: cnt.no2? sum.no2 / cnt.no2 : null,
+      so2: cnt.so2? sum.so2 / cnt.so2 : null,
+      co: cnt.co? sum.co / cnt.co : null,
+      p: cnt.p? sum.p / cnt.p : null,
+      avgDist: (details.length>0 && distSum.total>0) ? (distSum.total / details.length) : null,
+      count: details.length
+    };
+
+    // show on UI
+    updateSummaryUI(avg);
+  }
+
+  function updateSummaryUI(avg){
+    const cat = aqiCategory(avg.aqi);
+    const box = document.getElementById('aqiBox');
+    box.style.background = cat.color;
+    box.style.color = (getContrastYIQ(cat.color) === 'dark') ? '#000' : '#fff';
+    document.getElementById('avgAQI').innerText = (avg.aqi === null) ? '—' : Math.round(avg.aqi);
+    document.getElementById('avgCategory').innerText = cat.cat;
+    document.getElementById('areaLabel').innerText = `Area: Visible Map`;
+    document.getElementById('areaInfo').innerText = `Stations averaged: ${avg.count} (closest ${Math.min(MAX_DETAIL_STATIONS, avg.count)})`;
+    document.getElementById('avg_pm25').innerText = toFixedOrDash(avg.pm25,1);
+    document.getElementById('avg_pm10').innerText = toFixedOrDash(avg.pm10,1);
+    document.getElementById('avg_o3').innerText = toFixedOrDash(avg.o3,1);
+    document.getElementById('avg_no2').innerText = toFixedOrDash(avg.no2,1);
+    document.getElementById('avg_so2').innerText = toFixedOrDash(avg.so2,1);
+    document.getElementById('avg_co').innerText = toFixedOrDash(avg.co,1);
+    document.getElementById('avg_p').innerText = toFixedOrDash(avg.p,1);
+    document.getElementById('avg_dist').innerText = toFixedOrDash(avg.avgDist,1);
+  }
+
+  function resetSummary(){
+    document.getElementById('avgAQI').innerText = '—';
+    document.getElementById('avgCategory').innerText = '—';
+    document.getElementById('areaLabel').innerText = 'Area: —';
+    document.getElementById('areaInfo').innerText = `Stations averaged: 0`;
+    ['pm25','pm10','o3','no2','so2','co','p','dist'].forEach(k=>{
+      const el = document.getElementById('avg_'+k);
+      if(el) el.innerText = '—';
+    });
+  }
+
+  // helper contrast
+  function getContrastYIQ(hexcolor){
+    if(!hexcolor) return 'light';
+    hexcolor = hexcolor.replace('#','').trim(); if(hexcolor.length===3) hexcolor = hexcolor.split('').map(c=>c+c).join('');
+    const r = parseInt(hexcolor.substr(0,2),16), g = parseInt(hexcolor.substr(2,2),16), b = parseInt(hexcolor.substr(4,2),16);
+    const yiq = ((r*299)+(g*587)+(b*114))/1000; return (yiq >= 128) ? 'dark' : 'light';
+  }
+
+  /***** Orchestration: refresh stations + compute summary *****/
+  async function refreshStationsAndSummary(boundsStr){
+    // fetch stations by bounds
+    const stations = await fetchStations(boundsStr);
+    lastStations = stations;
+    renderStationMarkers(stations);
+
+    // pick center of bounds as reference
+    const b = map.getBounds();
+    const center = b.getCenter();
+    // compute average details for nearest N stations (requests)
+    await computeAndShowSummaryForStations(center.lat, center.lng, stations);
+  }
+
+  /***** City selection & progressive station fetch *****/
+  async function selectCity(obj){
+    // center
+    map.setView([obj.lat, obj.lng], 11);
+    document.getElementById('citySelect').value = JSON.stringify(obj);
+    // build small bounding box and refresh
+    const deltas = [0.5, 1.0, 2.0];
+    for(const d of deltas){
+      const bounds = `${obj.lat + d},${obj.lng - d},${obj.lat - d},${obj.lng + d}`;
+      const stations = await fetchStations(bounds);
+      if(stations && stations.length>0){
+        renderStationMarkers(stations);
+        await computeAndShowSummaryForStations(obj.lat, obj.lng, stations);
+        // fit to stations
+        const pts = stations.map(s=>[s.lat, s.lon]);
+        try{ map.fitBounds(pts, { maxZoom:12, padding:[40,40] }); }catch(e){}
+        return;
+      }
+    }
+    alert('No AQI stations found near the selected city.');
+  }
+
+  /***** Auto-detect location on load (choose nearest curated or fallback) *****/
+  async function autoDetect(){
+    if(!navigator.geolocation){
+      await selectCity(FALLBACK_CITY);
+      return;
+    }
+    try{
+      const pos = await new Promise((res,rej)=> navigator.geolocation.getCurrentPosition(res, rej, { timeout:10000, maximumAge:60000 }));
+      const lat = pos.coords.latitude, lng = pos.coords.longitude;
+      // find nearest curated city
+      let best = null, bestD = Infinity;
+      curatedCities.forEach(c=>{
+        const d = distanceKm(lat,lng,c.lat,c.lng);
+        if(d < bestD){ bestD = d; best = c; }
+      });
+      if(best && bestD < 300){
+        await selectCity(best);
+      } else {
+        // fallback to jakarta
+        await selectCity(FALLBACK_CITY);
+      }
+    }catch(e){
+      await selectCity(FALLBACK_CITY);
+    }
+  }
+
+  /***** Boot *****/
+  (function bootstrap(){
+    // init UI
+    populateDropdown();
+    // init map
+    initMap();
+    // auto detect location
+    autoDetect();
+  })();
+
+  </script>
 </body>
 </html>
