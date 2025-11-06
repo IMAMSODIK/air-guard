@@ -419,123 +419,121 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="card" style="margin-left:-30px; margin-right:-30px">
                         <div class="card-header">
                             <h4>Home</h4>
                         </div>
                         <div class="card-body">
-                            <div class="card-body px-0 pb-0">
-                                <div class="row justify-content-center">
-                                    <div class="app-container">
-                                        <!-- Sidebar -->
-                                        <div class="sidebar">
-                                            <div class="logo" style="display: flex; justify-content: center;">
-    <a href="/">
-        <img src="{{ asset('dashboard_assets/assets/images/logo/logo_dark.png') }}" 
-             alt="Logo" class="img-fluid" style="max-width: 100px;">
-    </a>
-</div>
+                            <div class="row justify-content-center">
+                                <div class="app-container">
+                                    <!-- Sidebar -->
+                                    <div class="sidebar">
+                                        <div class="logo" style="display: flex; justify-content: center;">
+                                            <a href="/">
+                                                <img src="{{ asset('dashboard_assets/assets/images/logo/logo_dark.png') }}"
+                                                    alt="Logo" class="img-fluid" style="max-width: 100px;">
+                                            </a>
+                                        </div>
 
 
-                                            <div class="control-section">
-                                                <div class="section-title">Location</div>
-                                                <select id="citySelect">
-                                                    <option value="">-- Select City --</option>
-                                                </select>
-                                                <div class="location-buttons">
-                                                    <button class="location-btn" id="detectLocation">
-                                                        📍 Detect My Location
-                                                    </button>
-                                                    <button class="location-btn" id="useNearestStation">
-                                                        🔍 Nearest Station
-                                                    </button>
-                                                </div>
-                                                <div class="detection-status" id="detectionStatus"></div>
+                                        <div class="control-section">
+                                            <div class="section-title">Location</div>
+                                            <select id="citySelect">
+                                                <option value="">-- Select City --</option>
+                                            </select>
+                                            <div class="location-buttons">
+                                                <button class="location-btn" id="detectLocation">
+                                                    📍 Detect My Location
+                                                </button>
+                                                <button class="location-btn" id="useNearestStation">
+                                                    🔍 Nearest Station
+                                                </button>
+                                            </div>
+                                            <div class="detection-status" id="detectionStatus"></div>
+                                        </div>
+
+                                        <div class="summary-card">
+                                            <div class="aqi-display">
+                                                <div class="aqi-value" id="avgAQI">—</div>
+                                                <div class="aqi-category" id="avgCategory">Loading...</div>
+                                            </div>
+                                            <div class="location-info">
+                                                <span id="areaLabel">Area: —</span>
+                                                <span id="areaInfo">Stations: 0</span>
                                             </div>
 
-                                            <div class="summary-card">
-                                                <div class="aqi-display">
-                                                    <div class="aqi-value" id="avgAQI">—</div>
-                                                    <div class="aqi-category" id="avgCategory">Loading...</div>
+                                            <div class="params-grid">
+                                                <div class="param-item">
+                                                    <div class="param-value" id="avg_pm25">—</div>
+                                                    <div class="param-label">PM2.5</div>
                                                 </div>
-                                                <div class="location-info">
-                                                    <span id="areaLabel">Area: —</span>
-                                                    <span id="areaInfo">Stations: 0</span>
+                                                <div class="param-item">
+                                                    <div class="param-value" id="avg_pm10">—</div>
+                                                    <div class="param-label">PM10</div>
                                                 </div>
-
-                                                <div class="params-grid">
-                                                    <div class="param-item">
-                                                        <div class="param-value" id="avg_pm25">—</div>
-                                                        <div class="param-label">PM2.5</div>
-                                                    </div>
-                                                    <div class="param-item">
-                                                        <div class="param-value" id="avg_pm10">—</div>
-                                                        <div class="param-label">PM10</div>
-                                                    </div>
-                                                    <div class="param-item">
-                                                        <div class="param-value" id="avg_o3">—</div>
-                                                        <div class="param-label">O₃</div>
-                                                    </div>
-                                                    <div class="param-item">
-                                                        <div class="param-value" id="avg_no2">—</div>
-                                                        <div class="param-label">NO₂</div>
-                                                    </div>
+                                                <div class="param-item">
+                                                    <div class="param-value" id="avg_o3">—</div>
+                                                    <div class="param-label">O₃</div>
                                                 </div>
-                                            </div>
-
-                                            <div class="control-section">
-                                                <div class="section-title">AQI Scale</div>
-                                                <div class="legend">
-                                                    <div class="legend-item">
-                                                        <div class="legend-color" style="background: var(--aqi-good)"></div>
-                                                        <span>Good</span>
-                                                    </div>
-                                                    <div class="legend-item">
-                                                        <div class="legend-color" style="background: var(--aqi-moderate)">
-                                                        </div>
-                                                        <span>Moderate</span>
-                                                    </div>
-                                                    <div class="legend-item">
-                                                        <div class="legend-color" style="background: var(--aqi-usg)"></div>
-                                                        <span>USG</span>
-                                                    </div>
-                                                    <div class="legend-item">
-                                                        <div class="legend-color" style="background: var(--aqi-unhealthy)">
-                                                        </div>
-                                                        <span>Unhealthy</span>
-                                                    </div>
-                                                    <div class="legend-item">
-                                                        <div class="legend-color" style="background: var(--aqi-very)"></div>
-                                                        <span>Very Unhealthy</span>
-                                                    </div>
+                                                <div class="param-item">
+                                                    <div class="param-value" id="avg_no2">—</div>
+                                                    <div class="param-label">NO₂</div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <!-- Main Content -->
-                                        <div class="main-content">
-                                            <div class="map-container">
-                                                <div id="map"></div>
+                                        <div class="control-section">
+                                            <div class="section-title">AQI Scale</div>
+                                            <div class="legend">
+                                                <div class="legend-item">
+                                                    <div class="legend-color" style="background: var(--aqi-good)"></div>
+                                                    <span>Good</span>
+                                                </div>
+                                                <div class="legend-item">
+                                                    <div class="legend-color" style="background: var(--aqi-moderate)">
+                                                    </div>
+                                                    <span>Moderate</span>
+                                                </div>
+                                                <div class="legend-item">
+                                                    <div class="legend-color" style="background: var(--aqi-usg)"></div>
+                                                    <span>USG</span>
+                                                </div>
+                                                <div class="legend-item">
+                                                    <div class="legend-color" style="background: var(--aqi-unhealthy)">
+                                                    </div>
+                                                    <span>Unhealthy</span>
+                                                </div>
+                                                <div class="legend-item">
+                                                    <div class="legend-color" style="background: var(--aqi-very)"></div>
+                                                    <span>Very Unhealthy</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Main Content -->
+                                    <div class="main-content">
+                                        <div class="map-container">
+                                            <div id="map"></div>
+                                        </div>
+
+                                        <div class="forecast-section">
+                                            <div class="section-header">
+                                                <h2>7-Day Air Quality Forecast</h2>
                                             </div>
 
-                                            <div class="forecast-section">
-                                                <div class="section-header">
-                                                    <h2>7-Day Air Quality Forecast</h2>
-                                                </div>
+                                            <div class="calendar-header">
+                                                <div class="calendar-day-header">Sun</div>
+                                                <div class="calendar-day-header">Mon</div>
+                                                <div class="calendar-day-header">Tue</div>
+                                                <div class="calendar-day-header">Wed</div>
+                                                <div class="calendar-day-header">Thu</div>
+                                                <div class="calendar-day-header">Fri</div>
+                                                <div class="calendar-day-header">Sat</div>
+                                            </div>
 
-                                                <div class="calendar-header">
-                                                    <div class="calendar-day-header">Sun</div>
-                                                    <div class="calendar-day-header">Mon</div>
-                                                    <div class="calendar-day-header">Tue</div>
-                                                    <div class="calendar-day-header">Wed</div>
-                                                    <div class="calendar-day-header">Thu</div>
-                                                    <div class="calendar-day-header">Fri</div>
-                                                    <div class="calendar-day-header">Sat</div>
-                                                </div>
-
-                                                <div class="calendar" id="forecastCalendar">
-                                                    <div class="loading">Loading forecast data...</div>
-                                                </div>
+                                            <div class="calendar" id="forecastCalendar">
+                                                <div class="loading">Loading forecast data...</div>
                                             </div>
                                         </div>
                                     </div>
@@ -1255,20 +1253,20 @@
                 <div class="day-date">${month} ${dayNumber}</div>
                 <div class="day-number">${dayName}</div>
                 ${aqi ? `
-                        <div class="day-aqi" style="color: ${category.color}">
-                            ${aqi}
-                        </div>
-                        <div class="day-pm25">PM2.5: ${toFixedOrDash(avgPm25, 1)} μg/m³</div>
-                        <div class="day-category" style="background: ${category.color}; color: ${getContrastYIQ(category.color) === 'dark' ? '#000' : '#fff'}">
-                            ${category.cat.split(' ')[0]}
-                        </div>
-                    ` : `
-                        <div class="day-aqi">—</div>
-                        <div class="day-pm25">No data</div>
-                        <div class="day-category" style="background: #999; color: #fff">
-                            Unknown
-                        </div>
-                    `}
+                                <div class="day-aqi" style="color: ${category.color}">
+                                    ${aqi}
+                                </div>
+                                <div class="day-pm25">PM2.5: ${toFixedOrDash(avgPm25, 1)} μg/m³</div>
+                                <div class="day-category" style="background: ${category.color}; color: ${getContrastYIQ(category.color) === 'dark' ? '#000' : '#fff'}">
+                                    ${category.cat.split(' ')[0]}
+                                </div>
+                            ` : `
+                                <div class="day-aqi">—</div>
+                                <div class="day-pm25">No data</div>
+                                <div class="day-category" style="background: #999; color: #fff">
+                                    Unknown
+                                </div>
+                            `}
             `;
 
             return dayElement;

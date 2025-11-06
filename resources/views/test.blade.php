@@ -3,28 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Air Quality Dashboard with News</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <title>Air Quality News</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --aqi-good: #00e400;
-            --aqi-moderate: #ffff00;
-            --aqi-usg: #ff7e00;
-            --aqi-unhealthy: #ff0000;
-            --aqi-very: #8f3f97;
-            --aqi-hazard: #7e0023;
+            --primary-color: #3b82f6;
+            --secondary-color: #1e40af;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --text-color: #1e293b;
             --muted-color: #64748b;
             --border-color: #e2e8f0;
-            --sidebar-width: 320px;
             --border-radius: 12px;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --primary-color: #3b82f6;
             --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
         }
 
         * {
@@ -40,30 +35,34 @@
             color: var(--text-color);
         }
 
-        .app-container {
-            display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr;
-            min-height: 100vh;
-            gap: 0;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        /* Sidebar Styles */
-        .sidebar {
+        /* Header Styles */
+        .header {
             background: var(--card-bg);
-            padding: 24px;
             box-shadow: var(--shadow);
-            overflow-y: auto;
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 32px;
             font-weight: 700;
             font-size: 1.5em;
             color: var(--primary-color);
+            text-decoration: none;
         }
 
         .logo-icon {
@@ -78,762 +77,744 @@
             font-weight: bold;
         }
 
-        .nav-tabs {
+        .nav-links {
             display: flex;
-            background: var(--bg-color);
-            border-radius: 8px;
-            padding: 4px;
-            margin-bottom: 24px;
+            gap: 30px;
+            align-items: center;
         }
 
-        .nav-tab {
-            flex: 1;
-            padding: 10px 16px;
-            text-align: center;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
             font-weight: 500;
-            font-size: 0.9em;
+            transition: color 0.2s;
         }
 
-        .nav-tab.active {
-            background: var(--primary-color);
-            color: white;
+        .nav-link:hover {
+            color: var(--primary-color);
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Control Sections */
-        .control-section {
-            margin-bottom: 32px;
-        }
-
-        .section-title {
-            font-size: 0.875em;
+        .nav-link.active {
+            color: var(--primary-color);
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--muted-color);
-            margin-bottom: 12px;
         }
 
-        select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
+        /* Main Content */
+        .main-content {
             background: var(--card-bg);
-            font-size: 0.95em;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Controls Section */
+        .controls {
+            padding: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1em;
             transition: all 0.2s;
         }
 
-        select:focus {
+        .search-box input:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        .location-buttons {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .location-btn {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: var(--bg-color);
-            font-size: 0.85em;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .location-btn:hover {
-            background: var(--border-color);
-        }
-
-        .location-btn.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .summary-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-bottom: 24px;
-        }
-
-        .aqi-display {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        .aqi-value {
-            font-size: 3em;
-            font-weight: 700;
-            line-height: 1;
-            margin-bottom: 4px;
-        }
-
-        .aqi-category {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .location-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-
-        .params-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .param-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .param-value {
-            font-size: 1.2em;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .param-label {
-            font-size: 0.8em;
-            opacity: 0.8;
-        }
-
-        /* News Tab Styles */
-        .news-filters {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .news-filter {
-            padding: 6px 12px;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            font-size: 0.8em;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .news-filter.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .news-search {
-            position: relative;
-            margin-bottom: 16px;
-        }
-
-        .news-search input {
-            width: 100%;
-            padding: 10px 16px 10px 40px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.9em;
-        }
-
-        .news-search i {
+        .search-icon {
             position: absolute;
-            left: 12px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--muted-color);
         }
 
-        .news-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .news-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            transition: all 0.2s;
+        .search-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .news-item:hover {
-            transform: translateY(-2px);
+        .search-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-1px);
             box-shadow: var(--shadow);
         }
 
-        .news-item:last-child {
-            margin-bottom: 0;
+        /* News Grid */
+        .news-grid {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .news-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+
+        .news-content {
+            padding: 20px;
         }
 
         .news-source {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-            font-size: 0.8em;
+            margin-bottom: 10px;
         }
 
-        .news-source-name {
+        .source-name {
             font-weight: 600;
             color: var(--primary-color);
+            font-size: 0.9em;
         }
 
         .news-date {
             color: var(--muted-color);
+            font-size: 0.85em;
         }
 
         .news-title {
             font-weight: 600;
-            margin-bottom: 8px;
+            font-size: 1.2em;
             line-height: 1.4;
-        }
-
-        .news-description {
-            font-size: 0.9em;
-            color: var(--muted-color);
-            line-height: 1.5;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        .news-read-more {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-size: 0.85em;
-            font-weight: 500;
-            display: inline-flex;
+        .news-description {
+            color: var(--muted-color);
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 4px;
+            font-size: 0.85em;
         }
 
-        .news-read-more:hover {
-            text-decoration: underline;
-        }
-
-        .news-loading {
-            text-align: center;
-            padding: 40px;
+        .read-time {
             color: var(--muted-color);
         }
 
-        .news-error {
-            text-align: center;
-            padding: 20px;
-            color: #ef4444;
-            background: #fef2f2;
-            border-radius: 8px;
-            margin-bottom: 16px;
-        }
-
-        /* Main Content Styles */
-        .main-content {
-            padding: 24px;
+        .read-more {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
             display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .map-container {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            flex: 1;
-        }
-
-        #map {
-            height: 400px;
-            width: 100%;
-        }
-
-        .forecast-section {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 24px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: between;
             align-items: center;
+            gap: 5px;
+        }
+
+        /* News Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            margin: 50px auto;
+            border-radius: var(--border-radius);
+            max-width: 800px;
+            position: relative;
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 30px 30px 0;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--muted-color);
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--error-color);
+        }
+
+        .modal-source {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            line-height: 1.3;
             margin-bottom: 20px;
         }
 
-        .section-header h2 {
-            font-size: 1.5em;
-            font-weight: 600;
-            color: var(--text-color);
+        .modal-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            margin-bottom: 20px;
         }
 
-        /* Calendar Styles */
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 12px;
+        .modal-body {
+            padding: 0 30px 30px;
         }
 
-        .calendar-header {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .calendar-day-header {
-            text-align: center;
-            font-weight: 600;
-            color: var(--muted-color);
-            font-size: 0.875em;
-            padding: 8px;
-            text-transform: uppercase;
-        }
-
-        .calendar-day {
-            background: var(--bg-color);
-            border-radius: 8px;
-            padding: 16px 12px;
-            text-align: center;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-            cursor: pointer;
-        }
-
-        .calendar-day:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .calendar-day.active {
-            border-color: var(--primary-color);
-            background: #eff6ff;
-        }
-
-        .day-date {
-            font-size: 0.9em;
-            color: var(--muted-color);
-            margin-bottom: 8px;
-        }
-
-        .day-number {
-            font-size: 1.4em;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .day-aqi {
+        .modal-content-text {
+            line-height: 1.7;
             font-size: 1.1em;
-            font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 25px;
         }
 
-        .day-pm25 {
-            font-size: 0.8em;
-            color: var(--muted-color);
-            margin-bottom: 8px;
-        }
-
-        .day-category {
-            font-size: 0.75em;
-            padding: 4px 8px;
-            border-radius: 20px;
-            background: var(--aqi-moderate);
-            color: #000;
-            font-weight: 500;
-        }
-
-        /* Legend Styles */
-        .legend {
+        .modal-footer {
             display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
         }
 
-        .legend-item {
+        .original-link {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.75em;
+            gap: 8px;
+            transition: background 0.2s;
         }
 
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+        .original-link:hover {
+            background: var(--secondary-color);
         }
 
-        /* Detection Status */
-        .detection-status {
-            font-size: 0.8em;
-            color: var(--muted-color);
-            margin-top: 8px;
+        /* Loading States */
+        .loading {
             text-align: center;
+            padding: 60px;
+            color: var(--muted-color);
+        }
+
+        .loading-spinner {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: var(--muted-color);
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: var(--border-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--card-bg);
+            padding: 30px 0;
+            text-align: center;
+            color: var(--muted-color);
+            margin-top: 50px;
         }
 
         /* Responsive Design */
-        @media (max-width: 1024px) {
-            .app-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                border-radius: 0;
-            }
-        }
-
         @media (max-width: 768px) {
-            .calendar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .calendar-header {
-                display: none;
-            }
-            
-            .params-grid {
+            .news-grid {
                 grid-template-columns: 1fr;
+                padding: 20px;
             }
-            
-            .location-buttons {
+
+            .search-section {
                 flex-direction: column;
             }
-            
-            .news-filters {
+
+            .search-btn {
+                width: 100%;
+            }
+
+            .nav {
                 flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .modal-content {
+                margin: 20px;
+            }
+
+            .modal-title {
+                font-size: 1.4em;
             }
         }
 
         @media (max-width: 480px) {
-            .calendar {
-                grid-template-columns: 1fr;
+            .container {
+                padding: 0 15px;
             }
-            
-            .main-content {
-                padding: 16px;
+
+            .page-title {
+                font-size: 2em;
             }
-            
-            .sidebar {
-                padding: 16px;
+
+            .controls {
+                padding: 20px;
+            }
+
+            .filters {
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">AQ</div>
-                AirQuality
-            </div>
-
-            <div class="nav-tabs">
-                <div class="nav-tab active" data-tab="air-quality">Air Quality</div>
-                <div class="nav-tab" data-tab="news">News</div>
-            </div>
-
-            <!-- Air Quality Tab -->
-            <div class="tab-content active" id="air-quality-tab">
-                <div class="control-section">
-                    <div class="section-title">Location</div>
-                    <select id="citySelect">
-                        <option value="">-- Select City --</option>
-                    </select>
-                    <div class="location-buttons">
-                        <button class="location-btn" id="detectLocation">
-                            📍 Detect My Location
-                        </button>
-                        <button class="location-btn" id="useNearestStation">
-                            🔍 Nearest Station
-                        </button>
-                    </div>
-                    <div class="detection-status" id="detectionStatus"></div>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="air-quality-dashboard.html" class="logo">
+                    <div class="logo-icon">AQ</div>
+                    AirQuality
+                </a>
+                <div class="nav-links">
+                    <a href="air-quality-dashboard.html" class="nav-link">Air Quality</a>
+                    <a href="air-quality-news.html" class="nav-link active">News</a>
                 </div>
+            </nav>
+        </div>
+    </header>
 
-                <div class="summary-card">
-                    <div class="aqi-display">
-                        <div class="aqi-value" id="avgAQI">—</div>
-                        <div class="aqi-category" id="avgCategory">Loading...</div>
-                    </div>
-                    <div class="location-info">
-                        <span id="areaLabel">Area: —</span>
-                        <span id="areaInfo">Stations: 0</span>
-                    </div>
-                    
-                    <div class="params-grid">
-                        <div class="param-item">
-                            <div class="param-value" id="avg_pm25">—</div>
-                            <div class="param-label">PM2.5</div>
-                        </div>
-                        <div class="param-item">
-                            <div class="param-value" id="avg_pm10">—</div>
-                            <div class="param-label">PM10</div>
-                        </div>
-                        <div class="param-item">
-                            <div class="param-value" id="avg_o3">—</div>
-                            <div class="param-label">O₃</div>
-                        </div>
-                        <div class="param-item">
-                            <div class="param-value" id="avg_no2">—</div>
-                            <div class="param-label">NO₂</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="control-section">
-                    <div class="section-title">AQI Scale</div>
-                    <div class="legend">
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: var(--aqi-good)"></div>
-                            <span>Good</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: var(--aqi-moderate)"></div>
-                            <span>Moderate</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: var(--aqi-usg)"></div>
-                            <span>USG</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: var(--aqi-unhealthy)"></div>
-                            <span>Unhealthy</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: var(--aqi-very)"></div>
-                            <span>Very Unhealthy</span>
-                        </div>
-                    </div>
+    <!-- Main Content -->
+    <main class="container">
+        <div class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="container">
+                    <h1 class="page-title">Air Quality News</h1>
+                    <p class="page-subtitle">Latest updates on air pollution, environmental research, and climate change impacts on air quality worldwide</p>
                 </div>
             </div>
 
-            <!-- News Tab -->
-            <div class="tab-content" id="news-tab">
-                <div class="control-section">
-                    <div class="section-title">Air Quality News</div>
-                    
-                    <div class="news-search">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="newsSearch" placeholder="Search air quality news...">
+            <!-- Controls -->
+            <div class="controls">
+                <div class="search-section">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Search for air quality news, pollution, PM2.5, climate...">
                     </div>
+                    <button class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">All News</button>
+                    <button class="filter-btn" data-filter="pollution">Pollution</button>
+                    <button class="filter-btn" data-filter="health">Health Impacts</button>
+                    <button class="filter-btn" data-filter="climate">Climate Change</button>
+                    <button class="filter-btn" data-filter="research">Research</button>
+                    <button class="filter-btn" data-filter="technology">Technology</button>
+                </div>
+            </div>
 
-                    <div class="news-filters">
-                        <div class="news-filter active" data-filter="all">All</div>
-                        <div class="news-filter" data-filter="pollution">Pollution</div>
-                        <div class="news-filter" data-filter="health">Health</div>
-                        <div class="news-filter" data-filter="climate">Climate</div>
-                        <div class="news-filter" data-filter="research">Research</div>
+            <!-- News Grid -->
+            <div class="news-grid" id="newsGrid">
+                <div class="loading">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
                     </div>
-
-                    <div class="news-list" id="newsList">
-                        <div class="news-loading">
-                            <i class="fas fa-spinner fa-spin"></i><br>
-                            Loading latest air quality news...
-                        </div>
-                    </div>
+                    <p>Loading latest air quality news...</p>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="map-container">
-                <div id="map"></div>
+    <!-- News Detail Modal -->
+    <div class="modal" id="newsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="modal-source">
+                    <span class="source-name" id="modalSource">Loading source...</span>
+                    <span class="news-date" id="modalDate">Loading date...</span>
+                </div>
+                <h1 class="modal-title" id="modalTitle">Loading title...</h1>
             </div>
-
-            <div class="forecast-section">
-                <div class="section-header">
-                    <h2>7-Day Air Quality Forecast</h2>
+            <div class="modal-body">
+                <div class="modal-image" id="modalImage">
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); height: 300px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
                 </div>
-                
-                <div class="calendar-header">
-                    <div class="calendar-day-header">Sun</div>
-                    <div class="calendar-day-header">Mon</div>
-                    <div class="calendar-day-header">Tue</div>
-                    <div class="calendar-day-header">Wed</div>
-                    <div class="calendar-day-header">Thu</div>
-                    <div class="calendar-day-header">Fri</div>
-                    <div class="calendar-day-header">Sat</div>
+                <div class="modal-content-text" id="modalContent">
+                    Loading content...
                 </div>
-                
-                <div class="calendar" id="forecastCalendar">
-                    <div class="loading">Loading forecast data...</div>
+                <div class="modal-footer">
+                    <div class="read-time" id="modalReadTime">Estimated reading time: 2 min</div>
+                    <a href="#" class="original-link" id="modalLink" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        Read Full Article
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 AirQuality Dashboard. Providing real-time air quality information and environmental news.</p>
+        </div>
+    </footer>
+
     <script>
         // Configuration
-        const WAQI_TOKEN = "43560c647d82b9daf429da457f7b39cbda4c3e41";
-        const NEWS_API_KEY = "YOUR_NEWS_API_KEY"; // Dapatkan dari https://newsapi.org
-        const FALLBACK_CITY = {
-            city: "Jakarta",
-            country: "Indonesia",
-            lat: -6.21462,
-            lng: 106.84513
-        };
+        const NEWS_API_KEY = "d9bf79de7e7e462e9538f320a6a3ff67"; // Your token
+        const NEWS_API_URL = "https://newsapi.org/v2/everything";
 
         // Global variables
-        let map, stationMarkers = {}, lastStations = [];
-        let userLocation = null;
         let currentNews = [];
+        let currentFilter = 'all';
+        let currentSearch = '';
 
-        // Tab Navigation
-        function setupTabNavigation() {
-            const tabs = document.querySelectorAll('.nav-tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Remove active class from all tabs
-                    tabs.forEach(t => t.classList.remove('active'));
-                    // Add active class to clicked tab
-                    tab.classList.add('active');
-                    
-                    // Hide all tab contents
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    
-                    // Show selected tab content
-                    const tabId = tab.getAttribute('data-tab') + '-tab';
-                    document.getElementById(tabId).classList.add('active');
+        // DOM Elements
+        const newsGrid = document.getElementById('newsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const newsModal = document.getElementById('newsModal');
+        const modalClose = document.getElementById('modalClose');
 
-                    // Load news if news tab is selected
-                    if (tab.getAttribute('data-tab') === 'news' && currentNews.length === 0) {
-                        loadAirQualityNews();
-                    }
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNews();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Search functionality
+            searchBtn.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    filterNews();
                 });
+            });
+
+            // Modal close
+            modalClose.addEventListener('click', closeModal);
+            newsModal.addEventListener('click', function(e) {
+                if (e.target === newsModal) {
+                    closeModal();
+                }
+            });
+
+            // Close modal with ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
             });
         }
 
-        // News Functions
-        async function loadAirQualityNews(searchQuery = '', filter = 'all') {
-            const newsList = document.getElementById('newsList');
-            newsList.innerHTML = '<div class="news-loading"><i class="fas fa-spinner fa-spin"></i><br>Loading latest air quality news...</div>';
-
+        async function loadNews(searchQuery = 'air quality pollution PM2.5 AQI climate change environment') {
+            showLoading();
+            
             try {
-                // Fallback data jika NewsAPI tidak tersedia
-                const fallbackNews = getFallbackNews();
+                const url = `${NEWS_API_URL}?q=${encodeURIComponent(searchQuery)}&language=en&sortBy=publishedAt&pageSize=20&apiKey=${NEWS_API_KEY}`;
                 
-                // Jika ada API key, gunakan NewsAPI
-                if (NEWS_API_KEY && NEWS_API_KEY !== 'YOUR_NEWS_API_KEY') {
-                    const query = searchQuery || 'air quality pollution PM2.5 AQI';
-                    const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=en&sortBy=publishedAt&apiKey=${NEWS_API_KEY}`;
-                    
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    
-                    if (data.status === 'ok' && data.articles.length > 0) {
-                        currentNews = data.articles;
-                        displayNews(currentNews, filter);
-                    } else {
-                        throw new Error('No news articles found');
-                    }
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.status === 'ok' && data.articles.length > 0) {
+                    currentNews = data.articles;
+                    displayNews(currentNews);
                 } else {
-                    // Gunakan fallback data
-                    currentNews = fallbackNews;
-                    displayNews(currentNews, filter);
-                    newsList.innerHTML += '<div class="news-error">Using demo data. Get API key from newsapi.org for real news.</div>';
+                    throw new Error(data.message || 'No articles found');
                 }
             } catch (error) {
                 console.error('Error loading news:', error);
-                // Gunakan fallback data jika error
-                currentNews = getFallbackNews();
-                displayNews(currentNews, filter);
-                newsList.innerHTML = '<div class="news-error">Failed to load news. Showing demo data.</div>' + newsList.innerHTML;
+                showError('Failed to load news. Please try again later.');
             }
         }
 
-        function displayNews(news, filter = 'all') {
-            const newsList = document.getElementById('newsList');
-            
+        function displayNews(news) {
             if (!news || news.length === 0) {
-                newsList.innerHTML = '<div class="news-error">No news articles found about air quality.</div>';
+                showEmptyState();
                 return;
             }
 
-            let filteredNews = news;
-            
-            // Apply filter jika bukan "all"
-            if (filter !== 'all') {
-                filteredNews = news.filter(article => {
-                    const title = article.title?.toLowerCase() || '';
-                    const description = article.description?.toLowerCase() || '';
-                    const content = article.content?.toLowerCase() || '';
-                    
-                    const text = title + ' ' + description + ' ' + content;
-                    
-                    switch(filter) {
-                        case 'pollution':
-                            return text.includes('pollution') || text.includes('pollutant') || text.includes('emission');
-                        case 'health':
-                            return text.includes('health') || text.includes('medical') || text.includes('disease');
-                        case 'climate':
-                            return text.includes('climate') || text.includes('global warming') || text.includes('environment');
-                        case 'research':
-                            return text.includes('research') || text.includes('study') || text.includes('scientist');
-                        default:
-                            return true;
-                    }
-                });
-            }
-
-            if (filteredNews.length === 0) {
-                newsList.innerHTML = '<div class="news-error">No news found for this filter.</div>';
-                return;
-            }
-
-            newsList.innerHTML = filteredNews.map(article => `
-                <div class="news-item" onclick="window.open('${article.url}', '_blank')">
-                    <div class="news-source">
-                        <span class="news-source-name">${article.source?.name || 'Unknown Source'}</span>
-                        <span class="news-date">${formatNewsDate(article.publishedAt)}</span>
+            newsGrid.innerHTML = news.map(article => `
+                <div class="news-card" onclick="openNewsDetail('${article.url}')">
+                    <div class="news-image">
+                        ${article.urlToImage ? 
+                            `<img src="${article.urlToImage}" alt="${article.title}" style="width: 100%; height: 100%; object-fit: cover;">` :
+                            `<i class="fas fa-newspaper"></i>`
+                        }
                     </div>
-                    <div class="news-title">${article.title || 'No title available'}</div>
-                    <div class="news-description">${article.description || 'No description available'}</div>
-                    <a href="${article.url}" class="news-read-more" target="_blank" onclick="event.stopPropagation()">
-                        Read more <i class="fas fa-arrow-right"></i>
-                    </a>
+                    <div class="news-content">
+                        <div class="news-source">
+                            <span class="source-name">${article.source?.name || 'Unknown Source'}</span>
+                            <span class="news-date">${formatDate(article.publishedAt)}</span>
+                        </div>
+                        <h3 class="news-title">${article.title || 'No title available'}</h3>
+                        <p class="news-description">${article.description || 'No description available'}</p>
+                        <div class="news-meta">
+                            <span class="read-time">${estimateReadTime(article.content)} min read</span>
+                            <span class="read-more">
+                                Read more <i class="fas fa-arrow-right"></i>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             `).join('');
         }
 
-        function formatNewsDate(dateString) {
+        function filterNews() {
+            if (currentFilter === 'all') {
+                displayNews(currentNews);
+                return;
+            }
+
+            const filteredNews = currentNews.filter(article => {
+                const title = article.title?.toLowerCase() || '';
+                const description = article.description?.toLowerCase() || '';
+                const content = article.content?.toLowerCase() || '';
+                
+                const text = title + ' ' + description + ' ' + content;
+                
+                switch(currentFilter) {
+                    case 'pollution':
+                        return text.includes('pollution') || text.includes('pollutant') || text.includes('emission') || text.includes('smog');
+                    case 'health':
+                        return text.includes('health') || text.includes('medical') || text.includes('disease') || text.includes('lung') || text.includes('respiratory');
+                    case 'climate':
+                        return text.includes('climate') || text.includes('global warming') || text.includes('environment') || text.includes('carbon');
+                    case 'research':
+                        return text.includes('research') || text.includes('study') || text.includes('scientist') || text.includes('university');
+                    case 'technology':
+                        return text.includes('technology') || text.includes('innovation') || text.includes('sensor') || text.includes('monitoring');
+                    default:
+                        return true;
+                }
+            });
+
+            if (filteredNews.length === 0) {
+                showEmptyState('No news found for this filter.');
+            } else {
+                displayNews(filteredNews);
+            }
+        }
+
+        function performSearch() {
+            const query = searchInput.value.trim();
+            if (query) {
+                currentSearch = query;
+                loadNews(query);
+            } else {
+                currentSearch = '';
+                loadNews();
+            }
+        }
+
+        function openNewsDetail(articleUrl) {
+            const article = currentNews.find(a => a.url === articleUrl);
+            if (!article) return;
+
+            // Update modal content
+            document.getElementById('modalSource').textContent = article.source?.name || 'Unknown Source';
+            document.getElementById('modalDate').textContent = formatDate(article.publishedAt);
+            document.getElementById('modalTitle').textContent = article.title || 'No title available';
+            
+            // Handle image
+            const modalImage = document.getElementById('modalImage');
+            if (article.urlToImage) {
+                modalImage.innerHTML = `<img src="${article.urlToImage}" alt="${article.title}" style="width: 100%; max-height: 400px; object-fit: cover;">`;
+            } else {
+                modalImage.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); height: 300px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                `;
+            }
+
+            // Handle content
+            const content = article.content || article.description || 'No content available.';
+            document.getElementById('modalContent').innerHTML = `
+                <p>${content}</p>
+                ${article.content ? `<p><em>Click "Read Full Article" to continue reading on the original website.</em></p>` : ''}
+            `;
+
+            document.getElementById('modalReadTime').textContent = `Estimated reading time: ${estimateReadTime(article.content)} min`;
+            document.getElementById('modalLink').href = article.url;
+
+            // Show modal
+            newsModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            newsModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Utility functions
+        function formatDate(dateString) {
             const date = new Date(dateString);
             const now = new Date();
             const diffTime = Math.abs(now - date);
@@ -846,95 +827,55 @@
             } else if (diffDays < 7) {
                 return `${diffDays} days ago`;
             } else {
-                return date.toLocaleDateString();
+                return date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
             }
         }
 
-        function getFallbackNews() {
-            return [
-                {
-                    title: "New Study Shows Improved Air Quality in Major Cities During Pandemic",
-                    description: "Recent research indicates significant improvements in air quality metrics across urban centers due to reduced industrial activity.",
-                    url: "#",
-                    source: { name: "Environmental Research" },
-                    publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-                    content: "A comprehensive study analyzing air quality data from 50 major cities worldwide shows notable improvements in PM2.5 and NO2 levels."
-                },
-                {
-                    title: "WHO Updates Air Quality Guidelines for Better Public Health Protection",
-                    description: "The World Health Organization has released updated global air quality guidelines, setting stricter limits for major pollutants.",
-                    url: "#",
-                    source: { name: "World Health Organization" },
-                    publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-                    content: "New guidelines aim to protect populations from the adverse health effects of air pollution, with revised limits for PM2.5, PM10, and ozone."
-                },
-                {
-                    title: "Innovative Technology Monitors Real-Time Air Quality in Urban Areas",
-                    description: "New sensor networks and AI algorithms are revolutionizing how cities monitor and respond to air pollution events.",
-                    url: "#",
-                    source: { name: "Tech Innovation Daily" },
-                    publishedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-                    content: "Advanced monitoring systems provide real-time data to help urban planners and residents make informed decisions about outdoor activities."
-                },
-                {
-                    title: "Climate Change Impact on Air Quality Becomes Increasingly Evident",
-                    description: "Scientists warn that climate change is exacerbating air pollution problems, particularly in vulnerable regions.",
-                    url: "#",
-                    source: { name: "Climate Science Journal" },
-                    publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-                    content: "Research shows interconnected relationships between climate patterns, wildfire frequency, and deteriorating air quality metrics."
-                },
-                {
-                    title: "Community-Led Initiatives Successfully Reduce Local Air Pollution",
-                    description: "Grassroots movements and local government partnerships show promising results in improving neighborhood air quality.",
-                    url: "#",
-                    source: { name: "Community Action Network" },
-                    publishedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-                    content: "Successful case studies demonstrate how community engagement and policy changes can lead to measurable air quality improvements."
-                }
-            ];
+        function estimateReadTime(content) {
+            if (!content) return 2;
+            const wordsPerMinute = 200;
+            const words = content.split(/\s+/).length;
+            const minutes = Math.ceil(words / wordsPerMinute);
+            return Math.max(1, minutes);
         }
 
-        function setupNewsFilters() {
-            const filters = document.querySelectorAll('.news-filter');
-            filters.forEach(filter => {
-                filter.addEventListener('click', () => {
-                    filters.forEach(f => f.classList.remove('active'));
-                    filter.classList.add('active');
-                    
-                    const filterType = filter.getAttribute('data-filter');
-                    displayNews(currentNews, filterType);
-                });
-            });
-
-            // Search functionality
-            const searchInput = document.getElementById('newsSearch');
-            let searchTimeout;
-            searchInput.addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    const query = e.target.value.trim();
-                    if (query) {
-                        loadAirQualityNews(query);
-                    } else {
-                        loadAirQualityNews();
-                    }
-                }, 500);
-            });
+        function showLoading() {
+            newsGrid.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <p>Loading latest air quality news...</p>
+                </div>
+            `;
         }
 
-        // ... (rest of the existing JavaScript code for map, location detection, etc.)
-        // Note: You'll need to include all the existing JavaScript functions from the previous implementation
-
-        // Initialize App
-        function initApp() {
-            setupTabNavigation();
-            setupNewsFilters();
-            // ... existing initialization code
+        function showError(message) {
+            newsGrid.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading News</h3>
+                    <p>${message}</p>
+                    <button onclick="loadNews()" style="margin-top: 10px; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        Try Again
+                    </button>
+                </div>
+            `;
         }
 
-        // Start the application
-        document.addEventListener('DOMContentLoaded', initApp);
+        function showEmptyState(message = 'No news articles found.') {
+            newsGrid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-newspaper"></i>
+                    <h3>${message}</h3>
+                    <p>Try changing your search terms or filters.</p>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
