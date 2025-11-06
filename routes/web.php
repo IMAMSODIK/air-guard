@@ -23,6 +23,13 @@ Route::get('/faq', function () {
     return view('faq.index', $data);
 });
 
+Route::get('/news', function () {
+    $data = [
+    'pageTitle' => 'News',
+    ];
+    return view('news.index', $data);
+});
+
 Route::get('/developers', function () {
     $data = [
         'pageTitle' => 'Developers',
