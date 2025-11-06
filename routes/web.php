@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/home', function () {
@@ -43,6 +44,27 @@ Route::fallback(function () {
     return redirect('/home');
 });
 
-Route::get('/test', function(){
-    return view('test');
+Route::get('/news', function () {
+    $key = env('GNEWS_API_KEY');
+    $url = 'https://gnews.io/api/v4/search';
+
+    $response = Http::withoutVerifying()->get($url, [
+        'q' => 'air pollution OR air quality OR climate OR environment OR green energy OR clean air',
+        'token' => $key,
+        'lang' => 'en',
+        'max' => 10,
+        'from' => now()->subDays(7)->toDateString(), // ambil berita dari 7 hari terakhir
+    ]);
+
+    $json = $response->json();
+
+    if (!isset($json['articles'])) {
+        dd($json);
+    }
+
+    $articles = $json['articles'];
+    $pageTitle = "News";
+
+    return view('news.index', compact('articles', 'pageTitle'));
 });
+
