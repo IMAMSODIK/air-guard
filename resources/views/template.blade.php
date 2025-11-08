@@ -32,8 +32,8 @@
         /* Mobile styles untuk floating button */
         @media (max-width: 768px) {
             #tanyaZoneBtn {
-                width: 80px;
-                height: 80px;
+                width: 120px;
+                height: 120px;
                 bottom: 15px;
                 right: 15px;
             }
@@ -41,8 +41,8 @@
 
         @media (max-width: 480px) {
             #tanyaZoneBtn {
-                width: 70px;
-                height: 70px;
+                width: 100px;
+                height: 100px;
                 bottom: 10px;
                 right: 10px;
             }
