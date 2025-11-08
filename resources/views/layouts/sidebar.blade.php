@@ -3,7 +3,7 @@
     <div class="logo-wrapper">
         <a href="/dashboard">
             <img class="img-fluid" width="40px" src="{{ asset('dashboard_assets/assets/images/logo/logo.png') }}"
-                alt="" style="width: 50px">
+                alt="" style="width: 50px; margin-top: -10px">
         </a>
         <div class="back-btn">
             <i class="fa fa-angle-left"> </i>
@@ -65,11 +65,21 @@
                 </li>
 
                 <li class="sidebar-list">
-    <a class="sidebar-link sidebar-title link-nav {{ request()->is('news') ? 'active' : '' }}" href="/news">
-        <i class="fa fa-newspaper-o text-white me-2" aria-hidden="true"></i>
-        <span>News</span>
-    </a>
-</li>
+                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('news') ? 'active' : '' }}"
+                        href="/news">
+                        <i class="fa fa-newspaper-o text-white me-2" aria-hidden="true"></i>
+                        <span>News</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('developers') ? 'active' : '' }}"
+                        href="/zone-ai">
+                        <i class="fa-solid fa-robot text-white me-2"></i>
+                        <span>Zone AI</span>
+                    </a>
+                </li>
+
 
 
                 <li class="sidebar-list">

@@ -1,468 +1,664 @@
-@extends('template')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('own_style')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glosarium Istilah Cuaca</title>
     <style>
         :root {
-            --primary: #3b82f6;
-            --primary-dark: #1e40af;
-            --secondary: #64748b;
-            --success: #10b981;
-            --light-bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --radius: 12px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #1abc9c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --danger: #e74c3c;
+            --warning: #f39c12;
         }
 
-        .news-page {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 2rem 0;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .news-container {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            position: relative;
-        }
-
-        .page-subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .stats-bar {
-            background: var(--light-bg);
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 0 1rem;
-        }
-
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .news-grid {
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 2rem;
-        }
-
-        .news-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .news-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--primary);
-        }
-
-        .news-image-container {
-            width: 100%;
-            height: 220px;
-            overflow: hidden;
-            position: relative;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .news-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .news-card:hover .news-image {
-            transform: scale(1.08);
-        }
-
-        .news-image-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 3rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        }
-
-        .source-badge {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: rgba(255, 255, 255, 0.95);
-            color: var(--primary);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            backdrop-filter: blur(10px);
-        }
-
-        .news-content {
-            padding: 1.5rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .news-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            font-size: 0.8rem;
-        }
-
-        .news-date {
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .news-category {
-            background: var(--light-bg);
-            color: var(--primary);
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .news-title {
-            font-weight: 700;
-            font-size: 1.25rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .news-description {
-            color: var(--text-light);
+        body {
+            background-color: #f5f7fa;
+            color: #333;
             line-height: 1.6;
-            margin-bottom: 1.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .alphabet-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 2rem;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .alphabet-nav button {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--light);
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .alphabet-nav button:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .alphabet-nav button.active {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 3rem;
+        }
+
+        .term-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border-left: 5px solid var(--accent);
+        }
+
+        .term-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .term-card h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .term-card .definition {
+            color: var(--dark);
+            margin-bottom: 15px;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            flex-grow: 1;
         }
 
-        .news-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-        }
-
-        .read-time {
-            color: var(--text-light);
+        .term-card .category {
+            display: inline-block;
+            background: var(--light);
+            color: var(--dark);
+            padding: 5px 12px;
+            border-radius: 20px;
             font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
         }
 
-        .read-more-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-            font-size: 0.9rem;
+        .category-kualitas-udara {
+            background: #e8f6f3 !important;
+            color: var(--accent) !important;
         }
 
-        .read-more-btn:hover {
-            background: var(--primary-dark);
-            color: white;
-            transform: translateX(4px);
+        .category-cuaca {
+            background: #e3f2fd !important;
+            color: var(--secondary) !important;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-light);
-            grid-column: 1 / -1;
+        .category-iklim {
+            background: #fff3e0 !important;
+            color: var(--warning) !important;
         }
 
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: var(--border);
-            opacity: 0.5;
+        .detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
         }
 
-        .loading-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-light);
-            grid-column: 1 / -1;
+        .modal-content {
+            background: white;
+            max-width: 800px;
+            margin: 50px auto;
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            animation: modalFade 0.3s ease;
         }
 
-        .loading-spinner {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-
-        @media (max-width: 768px) {
-            .news-grid {
-                grid-template-columns: 1fr;
-                padding: 1.5rem;
-                gap: 1.5rem;
-            }
-
-            .page-title {
-                font-size: 2rem;
-            }
-
-            .page-header {
-                padding: 2rem 0;
-            }
-
-            .stats-bar {
-                padding: 1rem;
-            }
-
-            .stat-item {
-                margin-bottom: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .news-page {
-                padding: 1rem 0;
-            }
-
-            .news-grid {
-                padding: 1rem;
-            }
-
-            .page-header {
-                padding: 1.5rem 0;
-            }
-        }
-
-        /* Animation for cards */
-        @keyframes fadeInUp {
+        @keyframes modalFade {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .news-card {
-            animation: fadeInUp 0.6s ease-out;
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--dark);
+            transition: color 0.2s ease;
         }
 
-        .news-card:nth-child(2) { animation-delay: 0.1s; }
-        .news-card:nth-child(3) { animation-delay: 0.2s; }
-        .news-card:nth-child(4) { animation-delay: 0.3s; }
-        .news-card:nth-child(5) { animation-delay: 0.4s; }
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .modal-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            margin-bottom: 25px;
+        }
+
+        .modal-body p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .impact-section,
+        .prevention-section {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .impact-section h3,
+        .prevention-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .impact-section ul,
+        .prevention-section ul {
+            padding-left: 20px;
+        }
+
+        .impact-section li,
+        .prevention-section li {
+            margin-bottom: 8px;
+        }
+
+        .pm25-visual {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 25px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .pm25-size-comparison {
+            flex: 1;
+            text-align: center;
+        }
+
+        .size-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .pm25-circle {
+            background: var(--danger);
+        }
+
+        .hair-circle {
+            background: var(--secondary);
+        }
+
+        .comparison-text {
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--dark);
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--light);
+        }
+
+        @media (max-width: 768px) {
+            .glossary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pm25-visual {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
     </style>
-@endsection
+</head>
 
-@section('content')
-    <div class="news-page">
+<body>
+    <header>
         <div class="container">
-            <!-- Header -->
-            <div class="row mb-4">
-                <div class="col-12 text-center">
-                    <a href="/" class="d-inline-block mb-4">
-                        <img src="{{ asset('dashboard_assets/assets/images/logo/logo_dark.png') }}" alt="Logo" 
-                             class="img-fluid" style="max-width: 100px; filter: brightness(0) invert(1);">
-                    </a>
-                </div>
+            <h1>Glosarium Istilah Cuaca</h1>
+            <p class="subtitle">Temukan definisi istilah-istilah penting dalam meteorologi dan kualitas udara</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Cari istilah cuaca...">
+        </div>
+
+        <div class="alphabet-nav" id="alphabetNav">
+            <!-- Alphabet buttons will be generated by JavaScript -->
+        </div>
+
+        <div class="glossary-grid" id="glossaryGrid">
+            <!-- Term cards will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <div class="detail-modal" id="detailModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle">PM2.5</h2>
+                <span class="category" id="modalCategory">Kualitas Udara</span>
             </div>
-
-            <!-- Main Content -->
-            <div class="row justify-content-center">
-                <div class="col-12 col-xxl-10">
-                    <div class="news-container">
-                        <!-- Page Header -->
-                        <div class="page-header">
-                            <div class="container">
-                                <h1 class="page-title">
-                                    <i class="fas fa-newspaper me-3"></i>Air Quality News
-                                </h1>
-                                <p class="page-subtitle">
-                                    Stay informed with the latest updates on air pollution, environmental research, and climate change impacts
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Stats Bar -->
-                        <div class="stats-bar">
-                            <div class="row text-center">
-                                <div class="col-md-3 col-6 stat-item">
-                                    <span class="stat-number">{{ count($articles) }}</span>
-                                    <span class="stat-label">Total Articles</span>
-                                </div>
-                                <div class="col-md-3 col-6 stat-item">
-                                    <span class="stat-number">{{ $articles->where('publishedAt', '>=', now()->subDays(1))->count() }}</span>
-                                    <span class="stat-label">Last 24 Hours</span>
-                                </div>
-                                <div class="col-md-3 col-6 stat-item">
-                                    <span class="stat-number">{{ $articles->unique('source.name')->count() }}</span>
-                                    <span class="stat-label">News Sources</span>
-                                </div>
-                                <div class="col-md-3 col-6 stat-item">
-                                    <span class="stat-number">7</span>
-                                    <span class="stat-label">Days Coverage</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- News Grid -->
-                        <div class="news-grid" id="newsGrid">
-                            @if(count($articles) > 0)
-                                @foreach($articles as $index => $article)
-                                    <div class="news-card" onclick="window.open('{{ $article['url'] }}', '_blank')">
-                                        <div class="news-image-container">
-                                            @if(!empty($article['image']))
-                                                <img src="{{ $article['image'] }}" class="news-image" alt="{{ $article['title'] }}">
-                                            @else
-                                                <div class="news-image-placeholder">
-                                                    <i class="fas fa-newspaper"></i>
-                                                </div>
-                                            @endif
-                                            <div class="source-badge">
-                                                {{ $article['source']['name'] ?? 'News' }}
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="news-content">
-                                            <div class="news-meta">
-                                                <span class="news-date">
-                                                    <i class="far fa-clock"></i>
-                                                    {{ \Carbon\Carbon::parse($article['publishedAt'])->diffForHumans() }}
-                                                </span>
-                                                <span class="news-category">
-                                                    {{ $article['source']['name'] ?? 'General' }}
-                                                </span>
-                                            </div>
-                                            
-                                            <h3 class="news-title">{{ $article['title'] }}</h3>
-                                            <p class="news-description">{{ $article['description'] ?? 'No description available' }}</p>
-                                            
-                                            <div class="news-actions">
-                                                <span class="read-time">
-                                                    <i class="far fa-eye"></i>
-                                                    {{ estimateReadTime($article['content'] ?? $article['description'] ?? '') }} min read
-                                                </span>
-                                                <a href="{{ $article['url'] }}" class="read-more-btn" target="_blank" onclick="event.stopPropagation()">
-                                                    Read More
-                                                    <i class="fas fa-arrow-right"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @else
-                                <div class="empty-state">
-                                    <div class="empty-state-icon">
-                                        <i class="fas fa-newspaper"></i>
-                                    </div>
-                                    <h3>No News Articles Found</h3>
-                                    <p class="mb-4">There are currently no air quality news articles available.</p>
-                                    <button class="btn btn-primary" onclick="window.location.reload()">
-                                        <i class="fas fa-refresh me-2"></i>
-                                        Refresh Page
-                                    </button>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated by JavaScript -->
             </div>
         </div>
     </div>
-@endsection
 
-@php
-    // Helper function for reading time estimation
-    if (!function_exists('estimateReadTime')) {
-        function estimateReadTime($content) {
-            if (empty($content)) return 2;
-            $words = str_word_count(strip_tags($content));
-            $minutes = ceil($words / 200);
-            return max(1, $minutes);
+    <footer>
+        <div class="container">
+            <p>Glosarium Istilah Cuaca &copy; 2023 - Sumber data dari BMKG dan WHO</p>
+        </div>
+    </footer>
+
+    <script>
+        const glossaryData = [{
+                term: "PM2.5",
+                definition: "Partikel halus di udara dengan diameter 2.5 mikrometer atau lebih kecil yang dapat masuk jauh ke dalam paru-paru dan aliran darah.",
+                fullDescription: "PM2.5 adalah partikel halus di udara dengan diameter 2.5 mikrometer atau lebih kecil (kira-kira 1/30 lebar rambut manusia). Partikel ini sangat kecil sehingga dapat terhirup dan masuk jauh ke dalam paru-paru bahkan aliran darah, menyebabkan berbagai masalah kesehatan seperti gangguan pernapasan dan kardiovaskular.",
+                category: "Kualitas Udara",
+                categoryClass: "category-kualitas-udara"
+            },
+            {
+                term: "PM10",
+                definition: "Partikel debu atau partikel kasar di udara dengan diameter kurang dari 10 mikrometer.",
+                fullDescription: "PM10 mencakup partikel seperti debu, serbuk sari, dan asap yang cukup kecil untuk terhirup ke dalam sistem pernapasan bagian atas. Kadar PM10 yang tinggi dapat menyebabkan iritasi pada mata, hidung, dan tenggorokan serta memperburuk penyakit paru-paru.",
+                category: "Kualitas Udara",
+                categoryClass: "category-kualitas-udara"
+            },
+            {
+                term: "CO (Karbon Monoksida)",
+                definition: "Gas tidak berwarna dan tidak berbau yang beracun, dihasilkan dari pembakaran bahan bakar yang tidak sempurna.",
+                fullDescription: "Karbon Monoksida (CO) terbentuk ketika bahan bakar seperti bensin, kayu, atau gas alam terbakar tidak sempurna. Paparan CO dalam jumlah tinggi dapat mengurangi kemampuan darah membawa oksigen, menyebabkan pusing, sakit kepala, bahkan kematian.",
+                category: "Kualitas Udara",
+                categoryClass: "category-kualitas-udara"
+            },
+            {
+                term: "NO₂ (Nitrogen Dioksida)",
+                definition: "Gas berwarna coklat kemerahan yang berbau tajam dan dapat menyebabkan iritasi pada saluran pernapasan.",
+                fullDescription: "Nitrogen Dioksida (NO₂) adalah hasil dari pembakaran bahan bakar fosil, terutama dari kendaraan bermotor dan pembangkit listrik. Gas ini dapat menyebabkan peradangan paru-paru dan menurunkan fungsi paru, terutama pada anak-anak dan penderita asma.",
+                category: "Kualitas Udara",
+                categoryClass: "category-kualitas-udara"
+            },
+            {
+                term: "SO₂ (Sulfur Dioksida)",
+                definition: "Gas tidak berwarna dengan bau tajam seperti belerang terbakar, berasal dari pembakaran batu bara dan minyak.",
+                fullDescription: "Sulfur Dioksida (SO₂) dilepaskan dari pembakaran bahan bakar fosil di pembangkit listrik, industri, dan kendaraan. Gas ini dapat bereaksi dengan air di atmosfer membentuk hujan asam dan menyebabkan iritasi pernapasan.",
+                category: "Kualitas Udara",
+                categoryClass: "category-kualitas-udara"
+            },
+            {
+                term: "O₃ (Ozon Permukaan)",
+                definition: "Gas reaktif yang terbentuk di atmosfer bawah akibat reaksi sinar matahari dengan polutan seperti NOx dan VOC.",
+                fullDescription: "Ozon di lapisan permukaan bumi (troposfer) bukanlah ozon pelindung di atmosfer atas. Ia terbentuk dari reaksi antara sinar UV dengan polutan kendaraan dan industri. Konsentrasi ozon tinggi dapat menyebabkan iritasi mata, tenggorokan, dan memperburuk penyakit paru-paru.",
+                category: "Kualitas Udara",
+                categoryClass: "category-kualitas-udara"
+            },
+            {
+                term: "µg/m³",
+                definition: "Satuan pengukuran untuk konsentrasi polutan di udara, yaitu mikrogram per meter kubik udara.",
+                fullDescription: "µg/m³ (mikrogram per meter kubik) digunakan untuk mengukur seberapa banyak partikel atau gas tertentu terdapat di satu meter kubik udara. Semakin tinggi nilainya, semakin banyak polutan di udara tersebut.",
+                category: "Satuan",
+                categoryClass: "category-satuan"
+            },
+            {
+                term: "Suhu Udara",
+                definition: "Ukuran panas atau dinginnya udara di suatu tempat pada waktu tertentu.",
+                fullDescription: "Suhu udara menunjukkan energi panas di atmosfer. Diukur menggunakan termometer dan biasanya dinyatakan dalam derajat Celcius (°C). Faktor yang memengaruhi suhu meliputi waktu, lokasi, ketinggian, dan kondisi awan.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "Tekanan Udara",
+                definition: "Gaya yang diberikan oleh udara pada satuan luas permukaan bumi.",
+                fullDescription: "Tekanan udara diukur dengan barometer dan dinyatakan dalam milibar (mb) atau hektopascal (hPa). Tekanan tinggi biasanya menandakan cuaca cerah, sementara tekanan rendah berkaitan dengan hujan dan badai.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "Kelembaban Relatif",
+                definition: "Perbandingan jumlah uap air di udara dengan jumlah maksimum uap air yang dapat ditampung udara pada suhu tertentu.",
+                fullDescription: "Kelembaban relatif dinyatakan dalam persen (%). Kelembaban tinggi membuat udara terasa gerah dan meningkatkan risiko hujan, sementara kelembaban rendah dapat menyebabkan kulit kering dan udara terasa panas.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "Kecepatan Angin",
+                definition: "Kecepatan pergerakan udara di atmosfer, biasanya diukur dalam kilometer per jam atau meter per detik.",
+                fullDescription: "Kecepatan angin dipengaruhi oleh perbedaan tekanan udara antara dua wilayah. Angin kencang dapat membawa awan hujan, menyebabkan badai, atau membantu menyebarkan polusi udara.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "Arah Angin",
+                definition: "Arah dari mana angin bertiup, biasanya dinyatakan dalam derajat atau arah mata angin (misal: barat daya).",
+                fullDescription: "Arah angin penting dalam prakiraan cuaca karena dapat menunjukkan pergerakan sistem tekanan, hujan, atau polutan dari satu wilayah ke wilayah lain.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "Curah Hujan",
+                definition: "Jumlah air hujan yang jatuh di suatu wilayah dalam periode waktu tertentu.",
+                fullDescription: "Curah hujan diukur dalam milimeter (mm). Nilai ini menunjukkan seberapa banyak air hujan yang terkumpul di permukaan datar tanpa penguapan atau aliran. Curah hujan tinggi dapat menyebabkan banjir, sedangkan curah hujan rendah dapat menimbulkan kekeringan.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "Awan Kumulonimbus",
+                definition: "Jenis awan vertikal yang sangat tinggi dan padat, terkait dengan badai petir dan cuaca ekstrem.",
+                fullDescription: "Awan Kumulonimbus dapat menjulang hingga ketinggian lebih dari 20 km dan menghasilkan hujan lebat, petir, angin kencang, serta tornado.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "El Niño",
+                definition: "Fenomena pemanasan suhu permukaan laut di Samudera Pasifik tropis bagian tengah dan timur.",
+                fullDescription: "El Niño dapat memengaruhi pola cuaca global, menyebabkan kekeringan di beberapa wilayah dan hujan lebat di wilayah lain. Fenomena ini terjadi setiap 2–7 tahun.",
+                category: "Iklim",
+                categoryClass: "category-iklim"
+            },
+            {
+                term: "La Niña",
+                definition: "Fenomena pendinginan suhu permukaan laut di Samudera Pasifik tropis bagian tengah dan timur.",
+                fullDescription: "La Niña merupakan kebalikan dari El Niño. Kondisi ini dapat meningkatkan curah hujan di wilayah tertentu dan menyebabkan suhu lebih dingin di wilayah tropis.",
+                category: "Iklim",
+                categoryClass: "category-iklim"
+            },
+            {
+                term: "Indeks UV",
+                definition: "Ukuran intensitas radiasi ultraviolet matahari di permukaan bumi.",
+                fullDescription: "Semakin tinggi nilai Indeks UV, semakin besar risiko kulit terbakar akibat paparan sinar matahari. Nilai di atas 6 memerlukan perlindungan tambahan seperti tabir surya atau pakaian pelindung.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "Presipitasi",
+                definition: "Setiap bentuk air cair atau beku yang jatuh dari atmosfer ke permukaan bumi.",
+                fullDescription: "Presipitasi mencakup hujan, salju, hujan es, atau embun. Fenomena ini terjadi ketika tetesan air di awan menjadi cukup berat untuk jatuh karena gravitasi.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "Kabut",
+                definition: "Kondensasi uap air di udara dekat permukaan tanah yang mengurangi jarak pandang.",
+                fullDescription: "Kabut terbentuk ketika udara lembap mendingin hingga mencapai titik embun. Ini sering terjadi di pagi hari atau di daerah lembah dan pegunungan.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            },
+            {
+                term: "Kilat dan Petir",
+                definition: "Pelepasan muatan listrik di atmosfer yang menyebabkan cahaya (kilat) dan suara (guntur).",
+                fullDescription: "Petir terjadi akibat perbedaan muatan listrik antara awan dan tanah atau antar awan. Fenomena ini sering disertai hujan badai dan berbahaya jika terjadi di area terbuka.",
+                category: "Cuaca",
+                categoryClass: "category-cuaca"
+            }
+        ];
+
+
+        // Inisialisasi halaman
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAlphabetNav();
+            renderGlossaryCards(glossaryData);
+            setupEventListeners();
+        });
+
+        // Inisialisasi navigasi alfabet
+        function initializeAlphabetNav() {
+            const alphabetNav = document.getElementById('alphabetNav');
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+            alphabet.forEach(letter => {
+                const button = document.createElement('button');
+                button.textContent = letter;
+                button.addEventListener('click', () => filterByLetter(letter));
+                alphabetNav.appendChild(button);
+            });
         }
-    }
-@endphp
+
+        // Render kartu glosarium
+        function renderGlossaryCards(data) {
+            const glossaryGrid = document.getElementById('glossaryGrid');
+            glossaryGrid.innerHTML = '';
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'term-card';
+                card.innerHTML = `
+                    <h3>${item.term}</h3>
+                    <div class="definition">${item.definition}</div>
+                    <span class="category ${item.categoryClass}">${item.category}</span>
+                `;
+                card.addEventListener('click', () => openTermDetail(item));
+                glossaryGrid.appendChild(card);
+            });
+        }
+
+        // Filter berdasarkan huruf
+        function filterByLetter(letter) {
+            const filteredData = glossaryData.filter(item =>
+                item.term.toUpperCase().startsWith(letter)
+            );
+
+            // Update active state in alphabet nav
+            document.querySelectorAll('.alphabet-nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            renderGlossaryCards(filteredData);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredData = glossaryData.filter(item =>
+                    item.term.toLowerCase().includes(searchTerm) ||
+                    item.definition.toLowerCase().includes(searchTerm)
+                );
+                renderGlossaryCards(filteredData);
+            });
+
+            // Modal close functionality
+            const closeModal = document.getElementById('closeModal');
+            const detailModal = document.getElementById('detailModal');
+
+            closeModal.addEventListener('click', () => {
+                detailModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === detailModal) {
+                    detailModal.style.display = 'none';
+                }
+            });
+        }
+
+        // Buka detail istilah
+        function openTermDetail(termData) {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalCategory = document.getElementById('modalCategory');
+            const modalBody = document.getElementById('modalBody');
+            const detailModal = document.getElementById('detailModal');
+
+            modalTitle.textContent = termData.term;
+            modalCategory.textContent = termData.category;
+            modalCategory.className = `category ${termData.categoryClass}`;
+
+            // Konten khusus untuk PM2.5
+            if (termData.term === "PM2.5") {
+                modalBody.innerHTML = `
+                    <p>${termData.fullDescription}</p>
+                    
+                    <div class="pm25-visual">
+                        <div class="pm25-size-comparison">
+                            <div class="size-circle pm25-circle">PM2.5</div>
+                            <div class="comparison-text">Partikel 2.5μm</div>
+                        </div>
+                        <div style="text-align: center; font-size: 1.5rem; font-weight: bold;">VS</div>
+                        <div class="pm25-size-comparison">
+                            <div class="size-circle hair-circle">Rambut</div>
+                            <div class="comparison-text">Lebar rambut manusia ~70μm</div>
+                        </div>
+                    </div>
+                    
+                    <div class="impact-section">
+                        <h3>Dampak Kesehatan PM2.5</h3>
+                        <ul>
+                            <li>Masalah pernapasan seperti asma dan bronkitis</li>
+                            <li>Penyakit kardiovaskular dan serangan jantung</li>
+                            <li>Kanker paru-paru</li>
+                            <li>Gangguan perkembangan pada anak</li>
+                            <li>Iritasi mata, hidung, dan tenggorokan</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="prevention-section">
+                        <h3>Cara Melindungi Diri</h3>
+                        <ul>
+                            <li>Pantau kualitas udara harian (AQI)</li>
+                            <li>Gunakan masker N95 saat kualitas udara buruk</li>
+                            <li>Batasi aktivitas luar ruangan saat polusi tinggi</li>
+                            <li>Gunakan pembersih udara di dalam ruangan</li>
+                            <li>Tutup jendela saat tingkat polusi tinggi</li>
+                        </ul>
+                    </div>
+                    
+                    <p><strong>Sumber:</strong> PM2.5 terutama berasal dari pembakaran bahan bakar fosil, kebakaran hutan, emisi industri, dan reaksi kimia di atmosfer.</p>
+                `;
+            } else {
+                modalBody.innerHTML = `
+                    <p>${termData.fullDescription}</p>
+                `;
+            }
+
+            detailModal.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

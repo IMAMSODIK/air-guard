@@ -31,6 +31,13 @@ Route::get('/news', function () {
     return view('news.index', $data);
 });
 
+Route::get('/zone-ai', function () {
+    $data = [
+        'pageTitle' => 'Zone AI',
+    ];
+    return view('ai.index', $data);
+});
+
 Route::get('/developers', function () {
     $data = [
         'pageTitle' => 'Developers',
@@ -53,7 +60,7 @@ Route::get('/news', function () {
         'token' => $key,
         'lang' => 'en',
         'max' => 10,
-        'from' => now()->subDays(7)->toDateString(), // ambil berita dari 7 hari terakhir
+        'from' => now()->subDays(7)->toDateString(),
     ]);
 
     $json = $response->json();
@@ -68,3 +75,9 @@ Route::get('/news', function () {
     return view('news.index', compact('articles', 'pageTitle'));
 });
 
+Route::get('/test', function () {
+    $data = [
+        'pageTitle' => 'Test',
+    ];
+    return view('test', $data);
+});
