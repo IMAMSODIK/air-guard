@@ -10,8 +10,8 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 110px;
-            height: 110px;
+            width: 150px;
+            height: 150px;
             background: none;
             z-index: 999999;
             cursor: pointer;
@@ -430,8 +430,7 @@
     <div id="tanyaZoneBtn">
         <img src="{{ asset('own_assets/images/mascot.png') }}" alt="Tanya Si Zone">
     </div>
-
-    <div class="chat-backdrop" id="chatBackdrop"></div>
+    
 
     <!-- Floating Chat -->
     <div id="chatBox">

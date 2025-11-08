@@ -16,7 +16,7 @@
 
         .chat-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
             height: 90vh;
             background: #006666;
             border-radius: 16px;
@@ -310,7 +310,7 @@
         .send-button {
             position: absolute;
             right: 12px;
-            bottom: 12px;
+            bottom: 17px;
             background: var(--secondary-color);
             border: none;
             border-radius: 6px;
@@ -586,7 +586,7 @@
             
             .send-button {
                 right: 8px;
-                bottom: 8px;
+                bottom: 12px;
                 width: 28px;
                 height: 28px;
             }
