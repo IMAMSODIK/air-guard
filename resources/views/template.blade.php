@@ -15,6 +15,11 @@
             background: none;
             z-index: 999999;
             cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #tanyaZoneBtn:hover {
+            transform: scale(1.05);
         }
 
         #tanyaZoneBtn img {
@@ -22,6 +27,25 @@
             height: 100%;
             object-fit: contain;
             pointer-events: none;
+        }
+
+        /* Mobile styles untuk floating button */
+        @media (max-width: 768px) {
+            #tanyaZoneBtn {
+                width: 80px;
+                height: 80px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #tanyaZoneBtn {
+                width: 70px;
+                height: 70px;
+                bottom: 10px;
+                right: 10px;
+            }
         }
 
         /* === CHAT WINDOW === */
@@ -41,12 +65,43 @@
             animation: fadeIn 0.3s ease-in-out;
         }
 
+        /* Mobile styles untuk chat box */
+        @media (max-width: 768px) {
+            #chatBox {
+                width: 90vw;
+                max-width: 400px;
+                right: 50%;
+                transform: translateX(50%);
+                bottom: 140px;
+                max-height: 70vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #chatBox {
+                width: 95vw;
+                max-height: 65vh;
+                bottom: 130px;
+                border-radius: 10px;
+            }
+            
+            /* Fullscreen mode untuk mobile kecil */
+            #chatBox.fullscreen {
+                width: 100vw;
+                height: 100vh;
+                max-height: 100vh;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+                transform: none;
+            }
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
                 transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -59,6 +114,41 @@
             padding: 14px;
             font-weight: bold;
             text-align: center;
+            position: relative;
+            user-select: none;
+        }
+
+        /* Mobile styles untuk header */
+        @media (max-width: 480px) {
+            #chatHeader {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+
+        /* Close button untuk mobile */
+        .close-chat {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .close-chat {
+                display: flex;
+            }
         }
 
         #chatMessages {
@@ -66,6 +156,15 @@
             padding: 15px;
             overflow-y: auto;
             background: #f6f6f6;
+            min-height: 200px;
+        }
+
+        /* Mobile styles untuk chat messages */
+        @media (max-width: 480px) {
+            #chatMessages {
+                padding: 12px;
+                min-height: 150px;
+            }
         }
 
         .message {
@@ -85,6 +184,7 @@
             padding: 10px 14px;
             border-radius: 14px 14px 0 14px;
             max-width: 80%;
+            word-break: break-word;
         }
 
         .bot {
@@ -99,6 +199,17 @@
             border-radius: 14px 14px 14px 0;
             max-width: 90%;
             text-align: left;
+            word-break: break-word;
+        }
+
+        /* Mobile styles untuk bubbles */
+        @media (max-width: 480px) {
+            .user .bubble,
+            .bot .bubble {
+                max-width: 85%;
+                padding: 10px 12px;
+                font-size: 14px;
+            }
         }
 
         /* Styling untuk response yang diformat */
@@ -167,10 +278,10 @@
             color: #111;
         }
 
-
         #chatInput {
             display: flex;
             border-top: 1px solid #ddd;
+            background: white;
         }
 
         #chatInput input {
@@ -179,6 +290,7 @@
             padding: 12px;
             outline: none;
             font-size: 14px;
+            background: transparent;
         }
 
         #chatInput button {
@@ -188,10 +300,92 @@
             padding: 12px 16px;
             cursor: pointer;
             font-weight: bold;
+            transition: background 0.2s ease;
+            white-space: nowrap;
         }
 
         #chatInput button:hover {
             background: #0277bd;
+        }
+
+        /* Mobile styles untuk input area */
+        @media (max-width: 480px) {
+            #chatInput input {
+                padding: 10px;
+                font-size: 16px; /* Mencegah zoom di iOS */
+            }
+            
+            #chatInput button {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: none;
+            padding: 10px 14px;
+            background: #e9ecef;
+            border-radius: 14px 14px 14px 0;
+            margin-bottom: 10px;
+            width: fit-content;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #888;
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typingAnimation {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Scrollbar styling */
+        #chatMessages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chatMessages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #chatMessages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        #chatMessages::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Backdrop untuk mobile */
+        .chat-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999997;
+        }
+
+        @media (max-width: 768px) {
+            .chat-backdrop.active {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -236,6 +430,8 @@
     <div id="tanyaZoneBtn">
         <img src="{{ asset('own_assets/images/mascot.png') }}" alt="Tanya Si Zone">
     </div>
+
+    <div class="chat-backdrop" id="chatBackdrop"></div>
 
     <!-- Floating Chat -->
     <div id="chatBox">
