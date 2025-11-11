@@ -102,4 +102,30 @@
     }
 </script>
 
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'id',
+        includedLanguages: 'en,id,fr,de,ja,zh-CN',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <!-- Script Ganti Bahasa -->
+  <script>
+    function changeLanguage(lang) {
+      const select = document.querySelector("select.goog-te-combo");
+      if (!select) {
+        console.log("Menunggu Google Translate siap...");
+        setTimeout(() => changeLanguage(lang), 500);
+        return;
+      }
+      select.value = lang;
+      select.dispatchEvent(new Event("change"));
+    }
+  </script>
+
 @yield('own_script')

@@ -1,105 +1,85 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AirZone News</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Google Translate</title>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap CSS (opsional, untuk tampilan tombol lebih bagus) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-        /* --- Gaya tombol bendera --- */
-        .language-switcher {
-            position: fixed;
-            top: 15px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            gap: 10px;
-        }
-
-        .language-switcher img {
-            width: 35px;
-            height: 24px;
-            cursor: pointer;
-            border-radius: 4px;
-            border: 2px solid transparent;
-            transition: transform 0.2s ease, border 0.2s ease;
-        }
-
-        .language-switcher img:hover {
-            transform: scale(1.1);
-            border-color: #007bff;
-        }
-
-        /* --- Sembunyikan widget Google bawaan --- */
-        #google_translate_element {
-            display: none;
-        }
-
-        .goog-logo-link, .goog-te-gadget {
-            display: none !important;
-        }
-
-        body {
-            top: 0px !important;
-        }
-    </style>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      padding: 40px;
+      background: #f8f9fa;
+    }
+    .flag-buttons button {
+      font-size: 16px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
 </head>
-
 <body>
 
-    <!-- ✅ Pilihan Bendera -->
-    <div class="language-switcher">
-        <img src="https://flagcdn.com/w40/id.png" alt="Indonesia" onclick="translatePage('id')">
-        <img src="https://flagcdn.com/w40/us.png" alt="English" onclick="translatePage('en')">
-        <img src="https://flagcdn.com/w40/fr.png" alt="French" onclick="translatePage('fr')">
-        <img src="https://flagcdn.com/w40/jp.png" alt="Japanese" onclick="translatePage('ja')">
+  <div class="container text-center">
+    <h2 class="mb-4">🌍 Demo Halaman Multibahasa</h2>
+    <p class="lead">
+      Aplikasi <b>AirZone</b> membantu masyarakat memahami kondisi udara dan cuaca secara real-time untuk meningkatkan kesehatan dan keselamatan harian.
+    </p>
+
+    <!-- Tombol Bendera -->
+    <div class="flag-buttons d-flex justify-content-center gap-2 mt-4">
+      <button onclick="changeLanguage('id')" class="btn btn-light border">🇮🇩 Indonesia</button>
+      <button onclick="changeLanguage('en')" class="btn btn-light border">🇺🇸 English</button>
+      <button onclick="changeLanguage('fr')" class="btn btn-light border">🇫🇷 Français</button>
+      <button onclick="changeLanguage('ja')" class="btn btn-light border">🇯🇵 日本語</button>
+      <button onclick="changeLanguage('de')" class="btn btn-light border">🇩🇪 Deutsch</button>
+      <button onclick="changeLanguage('zh-CN')" class="btn btn-light border">🇨🇳 中文</button>
     </div>
 
-    <!-- ✅ Konten Contoh -->
-    <div class="container mt-5">
-        <h1 class="fw-bold">AirZone: Ramalan Cuaca dan Kualitas Udara Real-Time</h1>
-        <p class="lead mt-3">
-            Aplikasi <strong>AirZone</strong> membantu masyarakat memahami kondisi cuaca dan kualitas udara dengan lebih cerdas.
-            Pilih bendera di kanan atas untuk menerjemahkan halaman ini.
-        </p>
-        <p>
-            Perubahan cuaca ekstrem kini bisa diantisipasi dengan data hyperlocal AirZone. Masyarakat dapat mengambil keputusan
-            lebih cepat terkait aktivitas harian mereka.
-        </p>
-    </div>
+    <hr class="my-4">
 
-    <!-- ✅ Google Translate Hidden Element -->
-    <div id="google_translate_element"></div>
+    <p>
+      Cuaca hari ini cukup cerah namun tingkat polusi udara meningkat.  
+      Gunakan masker N95 jika keluar rumah untuk menjaga kesehatan Anda.
+    </p>
+  </div>
 
-    <!-- ✅ Script Google Translate -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'id',
-                includedLanguages: 'id,en,fr,ja',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
+  <!-- Elemen Google Translate (disembunyikan) -->
+  <div id="google_translate_element" style="display:none;"></div>
+
+  <!-- Script Google Translate -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'id', // bahasa utama halaman
+        includedLanguages: 'en,id,fr,es,ja,ar,de,zh-CN',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <!-- Script Ganti Bahasa -->
+  <script>
+    function changeLanguage(lang) {
+        var select = document.querySelector("select.goog-te-combo");
+
+        if (!select) {
+            console.log("Menunggu Google Translate siap...");
+            setTimeout(function() {
+                changeLanguage(lang);
+            }, 500);
+            return;
         }
-    </script>
 
-    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        select.value = lang;
+        select.dispatchEvent(new Event("change"));
+    }
+  </script>
 
-    <!-- ✅ Script Pilihan Bahasa -->
-    <script>
-        function translatePage(lang) {
-            const select = document.querySelector('.goog-te-combo');
-            if (select) {
-                select.value = lang;
-                select.dispatchEvent(new Event('change'));
-            } else {
-                alert("Terjemahan belum siap, mohon tunggu 1-2 detik...");
-            }
-        }
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
