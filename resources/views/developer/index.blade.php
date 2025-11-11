@@ -39,7 +39,7 @@
                         <div class="card-body">
                             <div class="card-body px-0 pb-0">
                                 <div class="row">
-                                    <div class="col-6 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
                                         <div class="card social-profile">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
@@ -68,7 +68,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-6 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
                                         <div class="card social-profile">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
@@ -99,7 +99,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-6 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
                                         <div class="card social-profile">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
@@ -130,7 +130,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-6 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
                                         <div class="card social-profile">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
@@ -161,7 +161,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-6 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
                                         <div class="card social-profile">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
@@ -192,7 +192,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-6 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
                                         <div class="card social-profile">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
