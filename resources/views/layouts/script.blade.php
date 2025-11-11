@@ -101,11 +101,5 @@
         return 'Rp. ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 </script>
-<script>
-    $(".read-more-own").on("click", function() {
-        var newsId = $(this).data("id");
-        alert("Read more clicked for news ID: " + newsId);
-    });
-</script>
 
 @yield('own_script')

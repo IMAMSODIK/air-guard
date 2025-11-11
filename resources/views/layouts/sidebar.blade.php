@@ -76,7 +76,7 @@
                     <a class="sidebar-link sidebar-title link-nav {{ request()->is('developers') ? 'active' : '' }}"
                         href="/zone-ai">
                         <i class="fa-solid fa-robot text-white me-2"></i>
-                        <span>Zone AI</span>
+                        <span>Air Chat</span>
                     </a>
                 </li>
 
