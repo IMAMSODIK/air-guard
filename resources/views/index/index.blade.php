@@ -17,7 +17,6 @@
             height: 100%;
             border: 0;
         }
-
     </style>
 
     <style>
@@ -367,6 +366,126 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Informasi Gas Berbahaya: HCHO, CO, TVOC -->
+                                <div class="row justify-content-center mt-5">
+                                    <div class="col-12 col-lg-10">
+                                        <div class="card border-danger">
+                                            <div class="card-header bg-danger text-white text-center">
+                                                <h3 class="mb-0"><i class="fas fa-industry me-2"></i>Informasi Gas
+                                                    Berbahaya</h3>
+                                                <small>Dampak Formaldehida (HCHO), Karbon Monoksida (CO), dan Gas Organik
+                                                    (TVOC)</small>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row g-4">
+
+                                                    <!-- HCHO (Formaldehyde) -->
+                                                    <div class="col-md-6 col-lg-4">
+                                                        <div class="card h-100 border-0 shadow-sm">
+                                                            <div class="card-body text-center">
+                                                                <div
+                                                                    class="rounded-circle bg-warning bg-opacity-25 d-inline-flex p-3 mb-3">
+                                                                    <i class="fas fa-flask fa-2x text-warning"></i>
+                                                                </div>
+                                                                <h4 class="card-title">HCHO <small
+                                                                        class="text-muted">(Formaldehida)</small></h4>
+                                                                <p class="card-text">Gas tidak berwarna dengan bau tajam,
+                                                                    umum berasal dari asap rokok, furnitur berbahan kayu
+                                                                    lapis, lem, dan cat.</p>
+                                                                <hr>
+                                                                <div class="text-start">
+                                                                    <strong>Tingkat & Dampak:</strong>
+                                                                    <ul class="list-unstyled mt-2">
+                                                                        <li><i class="fas fa-circle text-success me-2"></i>
+                                                                            < 0.1 ppm : Aman</li>
+                                                                        <li><i class="fas fa-circle text-warning me-2"></i>
+                                                                            0.1 - 0.3 ppm : Iritasi mata & tenggorokan</li>
+                                                                        <li><i class="fas fa-circle text-danger me-2"></i>
+                                                                            > 0.3 ppm : Berbahaya, pemicu asma & risiko
+                                                                            kanker</li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- CO ppm (Carbon Monoxide) -->
+                                                    <div class="col-md-6 col-lg-4">
+                                                        <div class="card h-100 border-0 shadow-sm">
+                                                            <div class="card-body text-center">
+                                                                <div
+                                                                    class="rounded-circle bg-danger bg-opacity-25 d-inline-flex p-3 mb-3">
+                                                                    <i class="fas fa-car fa-2x text-danger"></i>
+                                                                </div>
+                                                                <h4 class="card-title">COppm <small
+                                                                        class="text-muted">(Karbon Monoksida)</small></h4>
+                                                                <p class="card-text">Gas beracun tanpa bau & warna. Berasal
+                                                                    dari kendaraan bermotor, pemanas ruangan, dan asap
+                                                                    kebakaran.</p>
+                                                                <hr>
+                                                                <div class="text-start">
+                                                                    <strong>Tingkat & Dampak:</strong>
+                                                                    <ul class="list-unstyled mt-2">
+                                                                        <li><i class="fas fa-circle text-success me-2"></i>
+                                                                            0 - 9 ppm : Normal di lingkungan luar</li>
+                                                                        <li><i class="fas fa-circle text-warning me-2"></i>
+                                                                            10 - 25 ppm : Waspada untuk kelompok sensitif
+                                                                        </li>
+                                                                        <li><i class="fas fa-circle text-danger me-2"></i>
+                                                                            > 50 ppm : Sakit kepala, kelelahan, bahaya fatal
+                                                                            jika terpapar lama</li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- TVOC (Total Volatile Organic Compounds) -->
+                                                    <div class="col-md-6 col-lg-4">
+                                                        <div class="card h-100 border-0 shadow-sm">
+                                                            <div class="card-body text-center">
+                                                                <div
+                                                                    class="rounded-circle bg-info bg-opacity-25 d-inline-flex p-3 mb-3">
+                                                                    <i class="fas fa-spray-can fa-2x text-info"></i>
+                                                                </div>
+                                                                <h4 class="card-title">TVOC <small class="text-muted">(Gas
+                                                                        Organik Total)</small></h4>
+                                                                <p class="card-text">Campuran ribuan senyawa kimia dari
+                                                                    cat, pengharum ruangan, pestisida, dan produk pembersih.
+                                                                </p>
+                                                                <hr>
+                                                                <div class="text-start">
+                                                                    <strong>Tingkat & Dampak:</strong>
+                                                                    <ul class="list-unstyled mt-2">
+                                                                        <li><i class="fas fa-circle text-success me-2"></i>
+                                                                            < 0.5 mg/m³ : Baik</li>
+                                                                        <li><i class="fas fa-circle text-warning me-2"></i>
+                                                                            0.5 - 1 mg/m³ : Iritasi ringan, sakit kepala
+                                                                        </li>
+                                                                        <li><i class="fas fa-circle text-danger me-2"></i>
+                                                                            > 1 mg/m³ : Gangguan saraf, kerusakan hati &
+                                                                            ginjal</li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- Pesan Peringatan Tambahan -->
+                                                <div class="alert alert-warning mt-4 text-center" role="alert">
+                                                    <i class="fas fa-shield-alt me-2"></i>
+                                                    <strong>Tips Kesehatan:</strong> Pastikan sirkulasi udara baik, gunakan
+                                                    masker jika diperlukan, dan hindari paparan jangka panjang dari sumber
+                                                    polusi dalam ruangan.
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>

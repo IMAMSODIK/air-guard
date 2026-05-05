@@ -65,10 +65,10 @@
                 </li>
 
                 <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('news') ? 'active' : '' }}"
-                        href="/news">
-                        <i class="fa fa-newspaper-o text-white me-2" aria-hidden="true"></i>
-                        <span>News</span>
+                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('quiz') ? 'active' : '' }}"
+                        href="/quiz">
+                        <i class="fa fa-check-square text-white me-2" aria-hidden="true"></i>
+                        <span>Quiz</span>
                     </a>
                 </li>
 
@@ -76,7 +76,7 @@
                     <a class="sidebar-link sidebar-title link-nav {{ request()->is('developers') ? 'active' : '' }}"
                         href="/zone-ai">
                         <i class="fa-solid fa-robot text-white me-2"></i>
-                        <span>Air Chat</span>
+                        <span>Tox Chat</span>
                     </a>
                 </li>
 

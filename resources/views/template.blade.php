@@ -428,17 +428,17 @@
 
     <!-- Floating Button -->
     <div id="tanyaZoneBtn">
-        <img src="{{ asset('own_assets/images/mascot.png') }}" alt="Tanya Si Zone">
+        <img src="{{ asset('own_assets/images/mascot.png') }}" alt="Tanya Si Tox">
     </div>
     
 
     <!-- Floating Chat -->
     <div id="chatBox">
-        <div id="chatHeader">💬 Tanya Si Zone</div>
+        <div id="chatHeader">💬 Tanya Si Tox</div>
         <div id="chatMessages">
             <div class="message bot">
                 <div class="bubble">
-                    <b>Zone:</b> Halo! Tanya Si Zone siap bantu kamu 🌤️
+                    <b>Tox:</b> Halo! Tanya Si Tox siap bantu kamu 🌤️
                 </div>
             </div>
         </div>
@@ -477,7 +477,7 @@
             userInput.value = '';
 
             // Tambahkan indikator mengetik
-            const loadingMsg = appendMessage('bot', "Zone sedang mengetik...");
+            const loadingMsg = appendMessage('bot', "Tox sedang mengetik...");
 
             // Gunakan model yang tersedia - Gemini 2.0 Flash
             const url =
@@ -525,7 +525,7 @@
             } catch (err) {
                 console.error('Error:', err);
                 loadingMsg.querySelector('.bubble').innerHTML =
-                    `<b>Zone:</b> Maaf, terjadi error. Silakan coba lagi.`;
+                    `<b>Tox:</b> Maaf, terjadi error. Silakan coba lagi.`;
             }
 
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -535,7 +535,7 @@
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('message', sender);
             msgDiv.innerHTML =
-                `<div class="bubble">${sender === 'user' ? '<b>Kamu:</b> ' : '<b>Zone:</b> '}${escapeHtml(text)}</div>`;
+                `<div class="bubble">${sender === 'user' ? '<b>Kamu:</b> ' : '<b>Tox:</b> '}${escapeHtml(text)}</div>`;
             chatMessages.appendChild(msgDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             return msgDiv;
@@ -550,7 +550,7 @@
 
             msgDiv.innerHTML = `
             <div class="bubble">
-                <b>Zone:</b> 
+                <b>Tox:</b> 
                 <div class="response-content">
                     ${formattedContent}
                 </div>

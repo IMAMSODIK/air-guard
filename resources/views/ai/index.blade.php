@@ -7,11 +7,11 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             /* background: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 16px; */
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    padding: 16px; */
         }
 
         .chat-container {
@@ -370,10 +370,14 @@
         }
 
         @keyframes typing {
-            0%, 80%, 100% {
+
+            0%,
+            80%,
+            100% {
                 transform: scale(0.8);
                 opacity: 0.5;
             }
+
             40% {
                 transform: scale(1);
                 opacity: 1;
@@ -463,11 +467,11 @@
             .chat-container {
                 height: 95vh;
             }
-            
+
             .sidebar-ai {
                 width: 220px;
             }
-            
+
             .message.assistant .message-content {
                 max-width: 90%;
             }
@@ -478,7 +482,7 @@
                 height: 100vh;
                 border-radius: 0;
             }
-            
+
             .sidebar-ai {
                 position: absolute;
                 top: 0;
@@ -487,50 +491,50 @@
                 z-index: 10;
                 transform: translateX(-100%);
             }
-            
+
             .sidebar-ai.active {
                 transform: translateX(0);
             }
-            
+
             .mobile-menu-btn {
                 display: block;
             }
-            
+
             .chat-messages {
                 padding: 16px;
             }
-            
+
             .message {
                 padding: 12px 16px;
                 gap: 12px;
             }
-            
+
             .message.assistant .message-content {
                 max-width: 95%;
             }
-            
+
             .welcome-screen {
                 padding: 20px;
             }
-            
+
             .welcome-title {
                 font-size: 24px;
             }
-            
+
             .welcome-subtitle {
                 font-size: 14px;
             }
-            
+
             .capabilities-grid {
                 grid-template-columns: 1fr;
                 gap: 12px;
                 margin-top: 24px;
             }
-            
+
             .capability-card {
                 padding: 16px;
             }
-            
+
             .chat-input-container {
                 padding: 16px;
             }
@@ -540,50 +544,50 @@
             .chat-messages {
                 padding: 12px;
             }
-            
+
             .message {
                 padding: 10px 12px;
                 gap: 8px;
             }
-            
+
             .avatar {
                 width: 28px;
                 height: 28px;
                 font-size: 12px;
             }
-            
+
             .message-content {
                 font-size: 14px;
             }
-            
+
             .message.assistant .message-content {
                 padding: 10px 12px;
                 font-size: 14px;
                 max-width: 100%;
             }
-            
+
             .welcome-title {
                 font-size: 20px;
             }
-            
+
             .welcome-subtitle {
                 font-size: 13px;
             }
-            
+
             .capability-card h4 {
                 font-size: 14px;
             }
-            
+
             .capability-card p {
                 font-size: 13px;
             }
-            
+
             .chat-input {
                 padding: 12px 40px 12px 12px;
                 min-height: 48px;
                 font-size: 14px;
             }
-            
+
             .send-button {
                 right: 8px;
                 bottom: 12px;
@@ -615,36 +619,37 @@
                             <path
                                 d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm12-1v14h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zm-1 0H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h9V1z" />
                         </svg>
-                        Penjelasan tentang cuaca
+                        Apa itu gas berbahaya dan contohnya?
                     </div>
+
                     <div class="history-item" data-chat-id="2">
                         <svg viewBox="0 0 16 16" fill="currentColor">
                             <path
                                 d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm12-1v14h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zm-1 0H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h9V1z" />
                         </svg>
-                        Cara prediksi iklim
+                        Bagaimana cara mendeteksi kebocoran gas?
                     </div>
                 </div>
 
                 <div class="sidebar-footer">
-                    Tanya Si Zone v1.0<br>
-                    Created By: <br> <strong>AirZone Team (SMA N 1 Medan)</strong>
+                    Tanya Si Tox v1.0<br>
+                    Created By: <br> <strong>Tox Gone Team</strong>
                 </div>
             </div>
 
             <!-- Main Chat Area -->
             <div class="chat-main">
                 <div class="chat-header">
-                    Si Zone AI
+                    Si Tox AI
                 </div>
 
                 <div class="chat-messages" id="chatMessagesZone">
                     <!-- Welcome Screen -->
                     <div class="welcome-screen" id="welcomeScreen">
                         <div class="welcome-icon">
-                            <img src="{{ asset('own_assets/images/mascot.png') }}" width="100px" alt="Tanya Si Zone">
+                            <img src="{{ asset('own_assets/images/mascot.png') }}" width="100px" alt="Tanya Si Tox">
                         </div>
-                        <h1 class="welcome-title">Halo! Saya Si Zone</h1>
+                        <h1 class="welcome-title">Halo! Saya Si Tox</h1>
                         <p class="welcome-subtitle">
                             Asisten AI Anda yang siap membantu menjawab pertanyaan tentang
                             cuaca, iklim,
@@ -676,7 +681,7 @@
                 <!-- Input Area -->
                 <div class="chat-input-container">
                     <div class="input-wrapper">
-                        <textarea class="chat-input" id="userInputZone" placeholder="Tanyakan sesuatu kepada Si Zone..." rows="1"
+                        <textarea class="chat-input" id="userInputZone" placeholder="Tanyakan sesuatu kepada Si Tox..." rows="1"
                             oninput="autoResize(this)"></textarea>
                         <button class="send-button" id="sendBtnZone" onclick="sendMessage()">
                             <svg viewBox="0 0 16 16" fill="currentColor">
@@ -697,7 +702,7 @@
         const welcomeScreen = document.getElementById('welcomeScreen');
         const userInputZone = document.getElementById('userInputZone');
         const sendBtnZone = document.getElementById('sendBtnZone');
-        let apiKeyZone = "AIzaSyDstx8GDz1KJBDI9s7lHwFRvUPhesYqjX0";
+        let apiKeyZone = "AIzaSyBITSku9lahOQNkFzkpn7kRD4_oyM9ad4Y";
         let currentChat = [];
 
         // Gunakan event delegation untuk element yang mungkin belum ada
@@ -753,7 +758,8 @@
 
             try {
                 const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKeyZone}`, {
+                    // Menggunakan gemini-1.5-flash-8b yang seringkali lebih stabil ketersediaannya di v1beta
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${apiKeyZone}`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -767,7 +773,7 @@
                             }],
                             generationConfig: {
                                 temperature: 0.7,
-                                topP: 0.8,
+                                topP: 0.95, // Sedikit ditingkatkan untuk variasi jawaban
                                 topK: 40,
                                 maxOutputTokens: 1024,
                             }
@@ -826,7 +832,7 @@
             typingDiv.innerHTML = `
                 <div class="avatar assistant">🌤️</div>
                 <div class="typing-indicator">
-                    <span>Si Zone sedang mengetik</span>
+                    <span>Si Tox sedang mengetik</span>
                     <div class="typing-dots">
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>

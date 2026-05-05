@@ -17,6 +17,164 @@
             height: 100%;
             border: 0;
         }
+
+        /* ========== STYLE UNTUK DEVELOPERS CARD ========== */
+        .developers-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0;
+        }
+
+        .developer-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .developer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .developer-card .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .social-img-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .social-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto;
+            border: 3px solid #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* biar tidak kepotong */
+            background-color: #f5f5f5;
+            /* optional biar rapi */
+        }
+
+        .developers-row>div {
+            display: flex;
+        }
+
+        .developers-row {
+            ` display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            /* ini bikin center */
+        }
+
+        .developer-card {
+            width: 100%;
+        }
+
+        .edit-icon {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #4c71f2;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .edit-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+        .social-details {
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .social-details h5 {
+            margin-bottom: 0.5rem;
+        }
+
+        .social-details h5 a {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2b2d42;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: inline-block;
+            word-break: break-word;
+        }
+
+        .social-details h5 a:hover {
+            color: #4c71f2;
+        }
+
+        /* Role/Badge styling (opsional, jika ingin menambahkan role) */
+        .developer-role {
+            font-size: 0.8rem;
+            color: #8d99ae;
+            margin-top: 0.25rem;
+        }
+
+        /* Membuat semua card memiliki tinggi yang sama pada baris yang sama */
+        @media (min-width: 768px) {
+            .developers-row {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .developers-row>[class*="col-"] {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        /* Responsif untuk mobile */
+        @media (max-width: 576px) {
+            .social-img {
+                width: 90px;
+                height: 90px;
+            }
+
+            .edit-icon {
+                width: 26px;
+                height: 26px;
+            }
+
+            .edit-icon svg {
+                width: 12px;
+                height: 12px;
+            }
+
+            .social-details h5 a {
+                font-size: 0.9rem;
+            }
+
+            .developer-card .card-body {
+                padding: 1rem;
+            }
+        }
     </style>
 @endsection
 
@@ -34,47 +192,20 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Developers</h4>
+                            <h4><i class="fas fa-users me-2"></i> Developers Team</h4>
+                            <p class="text-muted mb-0">Tim pengembang sistem deteksi kualitas udara</p>
                         </div>
                         <div class="card-body">
                             <div class="card-body px-0 pb-0">
-                                <div class="row">
-                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
-                                        <div class="card social-profile">
+                                <div class="row developers-row">
+                                    <!-- Bilal Muhammad Dwi Raharja -->
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4 mb-4">
+                                        <div class="card social-profile developer-card h-100">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
-                                                    <div class="social-img"><img
-                                                            src="{{ asset('own_assets/images/devs/nabil.jpeg') }}"
-                                                            alt="profile">
-                                                    </div>
-                                                    <div class="edit-icon">
-                                                        <svg>
-                                                            <use
-                                                                href="{{ asset('dashboard_assets/assets/svg/icon-sprite.svg#profile-check') }}">
-                                                            </use>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                                <div class="social-details">
-                                                    <h5 class="mb-1"><a href="#" style="font-size: 25px">Muhammad Nabil Sabili Nasution
-                                                            </a></h5><span class="f-light">@mhdnabilsabili</span>
-                                                    <ul class="card-social">
-                                                        <li>
-                                                            <a href="https://www.instagram.com/mhdnabilsabili" target="_blank"><i
-                                                                    class="fa-brands fa-instagram" style="font-size: 20px"></i></a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
-                                        <div class="card social-profile">
-                                            <div class="card-body">
-                                                <div class="social-img-wrap">
-                                                    <div class="social-img"><img
-                                                            src="{{ asset('own_assets/images/devs/hafiz.jpeg') }}"
-                                                            alt="profile">
+                                                    <div class="social-img">
+                                                        <img src="{{ asset('own_assets/images/devs/Bilal Muhammad Dwi Raharja.jpeg') }}"
+                                                            alt="Bilal Muhammad Dwi Raharja">
                                                     </div>
                                                     <div class="edit-icon">
                                                         <svg>
@@ -86,26 +217,21 @@
                                                 </div>
                                                 <div class="social-details">
                                                     <h5 class="mb-1">
-                                                        <a href="#" style="font-size: 25px">Hafizhi Maulana Akbar</a>
+                                                        <a href="#">Bilal Muhammad Dwi Raharja</a>
                                                     </h5>
-                                                    <span class="f-light">@hafizhmaulana_14</span>
-                                                    <ul class="card-social">
-                                                        <li>
-                                                            <a href="https://www.instagram.com/hafizhmaulana_14" target="_blank"><i
-                                                                    class="fa-brands fa-instagram" style="font-size: 20px"></i></a>
-                                                        </li>
-                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
-                                        <div class="card social-profile">
+
+                                    <!-- Enzi Zidane Tobing -->
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4 mb-4">
+                                        <div class="card social-profile developer-card h-100">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
-                                                    <div class="social-img"><img
-                                                            src="{{ asset('own_assets/images/devs/rafael.jpeg') }}"
-                                                            alt="profile">
+                                                    <div class="social-img">
+                                                        <img src="{{ asset('own_assets/images/devs/Enzi Zidane Tobing.jpeg') }}"
+                                                            alt="Enzi Zidane Tobing">
                                                     </div>
                                                     <div class="edit-icon">
                                                         <svg>
@@ -117,26 +243,21 @@
                                                 </div>
                                                 <div class="social-details">
                                                     <h5 class="mb-1">
-                                                        <a href="#" style="font-size: 25px">Raffael Hasudungan Sinaga</a>
+                                                        <a href="#">Enzi Zidane Tobing</a>
                                                     </h5>
-                                                    <span class="f-light">@raffaelsng</span>
-                                                    <ul class="card-social">
-                                                        <li>
-                                                            <a href="https://www.instagram.com/raffaelsng" target="_blank"><i
-                                                                    class="fa-brands fa-instagram" style="font-size: 20px"></i></a>
-                                                        </li>
-                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
-                                        <div class="card social-profile">
+
+                                    <!-- M. Ibrahim Irsyad Sitorus -->
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4 mb-4">
+                                        <div class="card social-profile developer-card h-100">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
-                                                    <div class="social-img"><img
-                                                            src="{{ asset('own_assets/images/devs/yehezkiel.jpeg') }}"
-                                                            alt="profile">
+                                                    <div class="social-img">
+                                                        <img src="{{ asset('own_assets/images/devs/M. Ibrahim Irsyad Sitorus.jpeg') }}"
+                                                            alt="M. Ibrahim Irsyad Sitorus">
                                                     </div>
                                                     <div class="edit-icon">
                                                         <svg>
@@ -148,26 +269,21 @@
                                                 </div>
                                                 <div class="social-details">
                                                     <h5 class="mb-1">
-                                                        <a href="#" style="font-size: 25px">Yehezkiel Hutapea</a>
+                                                        <a href="#">M. Ibrahim Irsyad Sitorus</a>
                                                     </h5>
-                                                    <span class="f-light">@yehezkielhtp</span>
-                                                    <ul class="card-social">
-                                                        <li>
-                                                            <a href="https://www.instagram.com/yehezkielhtp" target="_blank"><i
-                                                                    class="fa-brands fa-instagram" style="font-size: 20px"></i></a>
-                                                        </li>
-                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
-                                        <div class="card social-profile">
+
+                                    <!-- Muhammad Atqa Sapelfi Al Hakim -->
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4 mb-4">
+                                        <div class="card social-profile developer-card h-100">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
-                                                    <div class="social-img"><img
-                                                            src="{{ asset('own_assets/images/devs/raihan.jpeg') }}"
-                                                            alt="profile">
+                                                    <div class="social-img">
+                                                        <img src="{{ asset('own_assets/images/devs/Muhammad Atqa Sapelfi Al Hakim.jpeg') }}"
+                                                            alt="Muhammad Atqa Sapelfi Al Hakim">
                                                     </div>
                                                     <div class="edit-icon">
                                                         <svg>
@@ -178,27 +294,22 @@
                                                     </div>
                                                 </div>
                                                 <div class="social-details">
-                                                    <h5 class="mb-1"><a href="#"
-                                                            style="font-size: 25px">Raihan Zikri Rangkuti</a></h5><span
-                                                        class="f-light">@rhn_zikri</span>
-                                                    <ul class="card-social">
-                                                        <li>
-                                                            <a href="https://www.instagram.com/rhn_zikri" target="_blank"><i
-                                                                    class="fa-brands fa-instagram"
-                                                                    style="font-size: 20px"></i></a>
-                                                        </li>
-                                                    </ul>
+                                                    <h5 class="mb-1">
+                                                        <a href="#">Muhammad Atqa Sapelfi Al Hakim</a>
+                                                    </h5>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4">
-                                        <div class="card social-profile">
+
+                                    <!-- Muhammad Rais Al khoir -->
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4 mb-4">
+                                        <div class="card social-profile developer-card h-100">
                                             <div class="card-body">
                                                 <div class="social-img-wrap">
-                                                    <div class="social-img"><img
-                                                            src="{{ asset('own_assets/images/devs/rangga.jpeg') }}"
-                                                            alt="profile">
+                                                    <div class="social-img">
+                                                        <img src="{{ asset('own_assets/images/devs/Muhammad Rais Al khoir.jpeg') }}"
+                                                            alt="Muhammad Rais Al khoir">
                                                     </div>
                                                     <div class="edit-icon">
                                                         <svg>
@@ -209,17 +320,61 @@
                                                     </div>
                                                 </div>
                                                 <div class="social-details">
-                                                    <h5 class="mb-1"><a href="#"
-                                                            style="font-size: 25px">Rangga Cakrabawana Lessan</a></h5><span
-                                                        class="f-light">@rangga_lessan</span>
-                                                    <ul class="card-social">
-                                                        <li>
-                                                            <a href="https://www.instagram.com/rangga_lessan" target="_blank">
-                                                                <i
-                                                                    class="fa-brands fa-instagram"
-                                                                    style="font-size: 20px"></i></a>
-                                                        </li>
-                                                    </ul>
+                                                    <h5 class="mb-1">
+                                                        <a href="#">Muhammad Rais Al khoir</a>
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Muhammad Rumi Attarniki -->
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4 mb-4">
+                                        <div class="card social-profile developer-card h-100">
+                                            <div class="card-body">
+                                                <div class="social-img-wrap">
+                                                    <div class="social-img">
+                                                        <img src="{{ asset('own_assets/images/devs/Muhammad Rumi Attarniki.jpeg') }}"
+                                                            alt="Muhammad Rumi Attarniki">
+                                                    </div>
+                                                    <div class="edit-icon">
+                                                        <svg>
+                                                            <use
+                                                                href="{{ asset('dashboard_assets/assets/svg/icon-sprite.svg#profile-check') }}">
+                                                            </use>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div class="social-details">
+                                                    <h5 class="mb-1">
+                                                        <a href="#">Muhammad Rumi Attarniki</a>
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Muhammad Yazfi Yaznil -->
+                                    <div class="col-12 col-xl-4 col-sm-6 col-xxl-3 col-ed-4 box-col-4 mb-4">
+                                        <div class="card social-profile developer-card h-100">
+                                            <div class="card-body">
+                                                <div class="social-img-wrap">
+                                                    <div class="social-img">
+                                                        <img src="{{ asset('own_assets/images/devs/Muhammad Yazfi Yaznil.jpeg') }}"
+                                                            alt="Muhammad Yazfi Yaznil">
+                                                    </div>
+                                                    <div class="edit-icon">
+                                                        <svg>
+                                                            <use
+                                                                href="{{ asset('dashboard_assets/assets/svg/icon-sprite.svg#profile-check') }}">
+                                                            </use>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div class="social-details">
+                                                    <h5 class="mb-1">
+                                                        <a href="#">Muhammad Yazfi Yaznil</a>
+                                                    </h5>
                                                 </div>
                                             </div>
                                         </div>

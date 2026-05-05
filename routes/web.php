@@ -24,11 +24,11 @@ Route::get('/faq', function () {
     return view('faq.index', $data);
 });
 
-Route::get('/news', function () {
+Route::get('/quiz', function () {
     $data = [
-    'pageTitle' => 'News',
+        'pageTitle' => 'Quiz',
     ];
-    return view('news.index', $data);
+    return view('quiz.index', $data);
 });
 
 Route::get('/zone-ai', function () {
@@ -51,29 +51,29 @@ Route::fallback(function () {
     return redirect('/home');
 });
 
-Route::get('/news', function () {
-    $key = env('GNEWS_API_KEY');
-    $url = 'https://gnews.io/api/v4/search';
+// Route::get('/news', function () {
+//     $key = env('GNEWS_API_KEY');
+//     $url = 'https://gnews.io/api/v4/search';
 
-    $response = Http::withoutVerifying()->get($url, [
-        'q' => 'air pollution OR air quality OR climate OR environment OR green energy OR clean air',
-        'token' => $key,
-        'lang' => 'en',
-        'max' => 10,
-        'from' => now()->subDays(7)->toDateString(),
-    ]);
+//     $response = Http::withoutVerifying()->get($url, [
+//         'q' => 'air pollution OR air quality OR climate OR environment OR green energy OR clean air',
+//         'token' => $key,
+//         'lang' => 'en',
+//         'max' => 10,
+//         'from' => now()->subDays(7)->toDateString(),
+//     ]);
 
-    $json = $response->json();
+//     $json = $response->json();
 
-    if (!isset($json['articles'])) {
-        dd($json);
-    }
+//     if (!isset($json['articles'])) {
+//         dd($json);
+//     }
 
-    $articles = $json['articles'];
-    $pageTitle = "News";
+//     $articles = $json['articles'];
+//     $pageTitle = "News";
 
-    return view('news.index', compact('articles', 'pageTitle'));
-});
+//     return view('news.index', compact('articles', 'pageTitle'));
+// });
 
 Route::get('/test', function () {
     $data = [
