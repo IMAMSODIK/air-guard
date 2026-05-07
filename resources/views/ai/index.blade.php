@@ -759,7 +759,7 @@
             try {
                 const response = await fetch(
                     // Menggunakan gemini-1.5-flash-8b yang seringkali lebih stabil ketersediaannya di v1beta
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${apiKeyZone}`, {
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyZone}`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
