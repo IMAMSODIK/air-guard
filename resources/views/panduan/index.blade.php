@@ -749,7 +749,7 @@
                     <i class="fas fa-shield-alt"></i> Panduan ini bersifat edukatif. Segera hubungi petugas profesional
                     jika situasi membahayakan jiwa.
                     <br>
-                    <small class="mt-2 d-block">© 2024 - Tetap waspada, selamatkan nyawa</small>
+                    <small class="mt-2 d-block">© 2026 - Tetap waspada, selamatkan nyawa</small>
                 </div>
             </div>
         </div>
