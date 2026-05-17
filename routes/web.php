@@ -31,11 +31,11 @@ Route::get('/quiz', function () {
     return view('quiz.index', $data);
 });
 
-Route::get('/zone-ai', function () {
+Route::get('/panduan', function () {
     $data = [
-        'pageTitle' => 'Zone AI',
+        'pageTitle' => 'Panduan',
     ];
-    return view('ai.index', $data);
+    return view('panduan.index', $data);
 });
 
 Route::get('/developers', function () {

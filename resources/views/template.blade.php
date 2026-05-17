@@ -4,7 +4,7 @@
 <head>
     @include('layouts.head')
 
-    <style>
+    {{-- <style>
         /* === FLOATING BUTTON === */
         #tanyaZoneBtn {
             position: fixed;
@@ -387,7 +387,7 @@
                 display: block;
             }
         }
-    </style>
+    </style> --}}
 </head>
 
 <body>
@@ -427,13 +427,13 @@
     </div>
 
     <!-- Floating Button -->
-    <div id="tanyaZoneBtn">
+    {{-- <div id="tanyaZoneBtn">
         <img src="{{ asset('own_assets/images/mascot.png') }}" alt="Tanya Si Tox">
-    </div>
+    </div> --}}
     
 
     <!-- Floating Chat -->
-    <div id="chatBox">
+    {{-- <div id="chatBox">
         <div id="chatHeader">💬 Tanya Si Tox</div>
         <div id="chatMessages">
             <div class="message bot">
@@ -446,7 +446,7 @@
             <input type="text" id="userInput" placeholder="Ketik pesan...">
             <button id="sendBtn">Kirim</button>
         </div>
-    </div>
+    </div> --}}
 
 
     <script>

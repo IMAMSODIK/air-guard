@@ -73,14 +73,12 @@
                 </li>
 
                 <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('developers') ? 'active' : '' }}"
-                        href="/zone-ai">
-                        <i class="fa-solid fa-robot text-white me-2"></i>
-                        <span>Tox Chat</span>
+                    <a class="sidebar-link sidebar-title link-nav {{ request()->is('panduan') ? 'active' : '' }}"
+                        href="/panduan">
+                        <i class="fa-solid fa-book-open text-white me-2"></i>
+                        <span>Panduan</span>
                     </a>
                 </li>
-
-
 
                 <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav {{ request()->is('developers') ? 'active' : '' }}"
